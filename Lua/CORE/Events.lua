@@ -117,10 +117,10 @@ function EventFunctions:CreateGroup(name, position, before)
 	check_if_in_list(self.list, name)
 	check_if_not_in_list(self.list, position)
 	-- Initiate table and place it in the list.
-	local newset = {methods = {}}
+	local newset = {methods = {}, dictionary = {}}
 	self.list[name] = newset
 	-- Insert the new table.
-	if fore == true then
+	if before == true then
 		self.list:insertBefore(newset, self.list[position])
 	else
 		self.list:insertAfter(newset,self.list[position])
@@ -132,6 +132,7 @@ end
 -- Defaults to BeforeMethod, for no particular reason.
 function EventFunctions:Add(func, chosen_set, name)
 	--error checking
+	if not func then error("must pass in a function", 2) end
 	local temp_mt = getmetatable(func)
 	if func then
 		if not (type(func) == "function") then
@@ -149,8 +150,17 @@ function EventFunctions:Add(func, chosen_set, name)
 	local set = self.list[chosen_set]
 	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
 	--Add the function to the set.
-	set.methods[func] = name
+	set.dictionary[func] = name
+	table.insert(set.methods, func)
 end
+
+local find_index = function(tab, target)
+	for i,v in pairs(tab) do
+		if v == target then return i end
+	end
+	return false
+end
+
 
 -- Remove a function from the waiting list. Requires a pointer to the function object.
 function EventFunctions:Remove(func, chosen_set)
@@ -162,8 +172,10 @@ function EventFunctions:Remove(func, chosen_set)
 	local set = self.list[chosen_set]
 	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
 	--Remove the function, if it's previously been added.
-	if set.methods[func] then
-		set.methods[func] = nil
+	local res = find_index(set.methods, func)
+	if res then
+		table.remove(set.methods, res)
+		set.dictionary[func] = nil
 	else
 		error("This event's set \"" .. chosen_set .. "\" does not contain the function <" .. tostring(func) .. ">", 2 )
 	end
@@ -203,7 +215,7 @@ function EventFunctions:Call(...)
 	local broken = false
 	for set in self.list() do
 		if not set.is_disabled then
-			for func in pairs(set.methods) do
+			for i,func in ipairs(set.methods) do
 				temp_result, broken = func(...)
 				if (temp_result == break_event) or (broken == break_event) then
 					broken = true
@@ -249,14 +261,32 @@ function CreateEvent(func)
 								      return tab:items()
 								   end
 							 	  } )
-	Event.list.BeforeMethod = {name = "BeforeMethod", methods = {}}
-	Event.list.AfterMethod = {name = "AfterMethod", methods = {}}
+	Event.list.BeforeMethod = {name = "BeforeMethod", methods = {}, dictionary = {}}
+	Event.list.AfterMethod = {name = "AfterMethod", methods = {}, dictionary = {}}
 	Event.list:insertFirst(Event.list.BeforeMethod)
 	Event.list:insertLast(Event.list.AfterMethod)
 	--Set up the method itself
 	Event.method = func or function() end
-	Event.list.Method = { name = "Method", methods = {[function(...) return Event.method(...) end] = ".method" } }
+	local callmethod = function(...) return Event.method(...) end
+	Event.list.Method = { name = "Method", methods = {callmethod}, dictionary = {[callmethod] = ".method"} }
 	Event.list:insertAfter(Event.list.Method, Event.list.BeforeMethod)
 
 	return Event
 end
+
+
+apple = CreateEvent(function() print("apple") end)
+
+function banana()
+	print("banana")
+end
+function durian() print "durian" end
+
+apple:Add(banana)
+apple:Add(durian, "AfterMethod")
+
+apple()
+
+apple:Remove(durian, "AfterMethod")
+apple()
+
