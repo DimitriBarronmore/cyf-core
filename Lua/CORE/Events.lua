@@ -127,6 +127,13 @@ function EventFunctions:CreateGroup(name, position, before)
 	end
 end
 
+local find_index = function(tab, target)
+	for i,v in pairs(tab) do
+		if v == target then return i end
+	end
+	return false
+end
+
 -- Place a function into the waiting list, with optional name for debugging purposes.
 -- Doesn't error if you put in something other than a function, but it WILL crash anyways.
 -- Defaults to BeforeMethod, for no particular reason.
@@ -145,20 +152,13 @@ function EventFunctions:Add(func, chosen_set, name)
 	if chosen_set == "Method" then error('The Method set is reserved for this event\'s ".method" function.', 2) end
 	--Set up defaults.
 	chosen_set = chosen_set or "BeforeMethod"
-	name = name or "<name not assigned>"
+	name = name or "< " .. ( find_index(_ENV,func) or "no name given/discovered") .. " >"
 	--Make sure the chosen set actually exists.
 	local set = self.list[chosen_set]
 	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
 	--Add the function to the set.
 	set.dictionary[func] = name
 	table.insert(set.methods, func)
-end
-
-local find_index = function(tab, target)
-	for i,v in pairs(tab) do
-		if v == target then return i end
-	end
-	return false
 end
 
 
@@ -232,7 +232,18 @@ function EventFunctions:Call(...)
 	return end_result, broken
 end
 
-
+-- Step through the list without calling any functions, printing given names.
+function EventFunctions:Debug()
+	final = ""
+	for set in self.list() do
+		final = final .. (set.name .. ": " .. (set.is_disabled and "[disabled]" or "[enabled]") .. "\n")
+		for i, func in ipairs(set.methods) do
+			local name
+			final = final .. ("   > " .. i .. " - " .. set.dictionary[func] .. "\n")
+		end
+	end
+	return final
+end
 
 -- Here we finally create and return individual Event objects.
 
@@ -265,28 +276,13 @@ function CreateEvent(func)
 	Event.list.AfterMethod = {name = "AfterMethod", methods = {}, dictionary = {}}
 	Event.list:insertFirst(Event.list.BeforeMethod)
 	Event.list:insertLast(Event.list.AfterMethod)
+
 	--Set up the method itself
 	Event.method = func or function() end
-	local callmethod = function(...) return Event.method(...) end
+	local callmethod = function(...) return Event.method(...) end -- so the method can be changed later
 	Event.list.Method = { name = "Method", methods = {callmethod}, dictionary = {[callmethod] = ".method"} }
 	Event.list:insertAfter(Event.list.Method, Event.list.BeforeMethod)
 
 	return Event
 end
-
-
-apple = CreateEvent(function() print("apple") end)
-
-function banana()
-	print("banana")
-end
-function durian() print "durian" end
-
-apple:Add(banana)
-apple:Add(durian, "AfterMethod")
-
-apple()
-
-apple:Remove(durian, "AfterMethod")
-apple()
 
