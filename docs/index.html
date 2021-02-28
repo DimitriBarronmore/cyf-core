@@ -223,6 +223,8 @@ Error message and password prompt
 
 <li>$:/state/edit/references-1238011197</li>
 
+<li>$:/state/Excise/--1513149762/tagnew</li>
+
 <li>$:/state/Excise/--679829452/tagnew</li>
 
 <li>$:/state/Excise/-1415567817/tagnew</li>
@@ -626,6 +628,8 @@ Error message and password prompt
 <li>event:Call( )</li>
 
 <li>event:CreateGroup( )</li>
+
+<li>event:Debug( )</li>
 
 <li>event:DisableGroup( )</li>
 
@@ -11212,6 +11216,9 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div created="20210125034602439" modified="20210125034604056" title="$:/state/edit/references-1238011197">
 <pre>hide</pre>
 </div>
+<div created="20210228010949426" modified="20210228010949426" title="$:/state/Excise/--1513149762/tagnew">
+<pre>yes</pre>
+</div>
 <div created="20210125055757188" modified="20210125055757188" title="$:/state/Excise/--679829452/tagnew">
 <pre>yes</pre>
 </div>
@@ -11287,8 +11294,8 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div created="20201108165943573" modified="20201108171827506" title="$:/state/tabs/controlpanel/toolbars-1345989671">
 <pre>$:/core/ui/ControlPanel/Toolbars/PageControls</pre>
 </div>
-<div created="20210125043517169" modified="20210125061214468" title="$:/state/toc/Table Of Contents-CORE Events-1461748853">
-<pre>close</pre>
+<div created="20210125043517169" modified="20210228010954452" title="$:/state/toc/Table Of Contents-CORE Events-1461748853">
+<pre>open</pre>
 </div>
 <div created="20210125043558251" modified="20210125061210172" title="$:/state/toc/Table Of Contents-CORE Events-2084563383">
 <pre>open</pre>
@@ -11407,7 +11414,7 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20210126052831472" list="[[Main Page]]" modified="20210126053006945" title="$:/StoryList">
+<div created="20210228003509432" list="[[Main Page]] [[The Event Object]] [[event:Remove( )]] [[event:Add( )]] [[event:Call( )]] [[event:Debug( )]]" modified="20210228011230634" title="$:/StoryList">
 <pre></pre>
 </div>
 <div created="20201108165852924" list="$:/core/ui/Buttons/fold-bar $:/core/ui/Buttons/more-tiddler-actions $:/core/ui/Buttons/fold-others $:/core/ui/Buttons/fold $:/core/ui/Buttons/info $:/core/ui/Buttons/new-here $:/core/ui/Buttons/new-journal-here $:/core/ui/Buttons/clone $:/core/ui/Buttons/export-tiddler $:/core/ui/Buttons/edit $:/core/ui/Buttons/delete $:/core/ui/Buttons/permalink $:/core/ui/Buttons/permaview $:/core/ui/Buttons/open-window $:/core/ui/Buttons/close-others $:/core/ui/Buttons/close" modified="20201108165859551" title="$:/tags/ViewToolbar">
@@ -11426,7 +11433,7 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
         },
         &quot;$:/info/url/full&quot;: {
             &quot;title&quot;: &quot;$:/info/url/full&quot;,
-            &quot;text&quot;: &quot;file:///media/data/aaa_Programming%20Nonsense/Create%20Your%20Frisk/Libraries/CORE%20+%20Lab/Documentation.html&quot;
+            &quot;text&quot;: &quot;file:///media/data/aaa_Programming%20Nonsense/Create%20Your%20Frisk/Libraries/CORE%20+%20Lab/docs/index.html&quot;
         },
         &quot;$:/info/url/host&quot;: {
             &quot;title&quot;: &quot;$:/info/url/host&quot;,
@@ -11446,7 +11453,7 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
         },
         &quot;$:/info/url/pathname&quot;: {
             &quot;title&quot;: &quot;$:/info/url/pathname&quot;,
-            &quot;text&quot;: &quot;/media/data/aaa_Programming%20Nonsense/Create%20Your%20Frisk/Libraries/CORE%20+%20Lab/Documentation.html&quot;
+            &quot;text&quot;: &quot;/media/data/aaa_Programming%20Nonsense/Create%20Your%20Frisk/Libraries/CORE%20+%20Lab/docs/index.html&quot;
         },
         &quot;$:/info/url/search&quot;: {
             &quot;title&quot;: &quot;$:/info/url/search&quot;,
@@ -11454,7 +11461,7 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
         },
         &quot;$:/info/url/origin&quot;: {
             &quot;title&quot;: &quot;$:/info/url/origin&quot;,
-            &quot;text&quot;: &quot;null&quot;
+            &quot;text&quot;: &quot;file://&quot;
         },
         &quot;$:/info/browser/screen/width&quot;: {
             &quot;title&quot;: &quot;$:/info/browser/screen/width&quot;,
@@ -12700,18 +12707,20 @@ Takes a function object or callable table and returns an event object with [[eve
 
 </pre>
 </div>
-<div caption="event:Add( )" created="20201113011756816" list-after="event:EnableGroup( )" modified="20210125035509820" tags="[[The Event Object]]" title="event:Add( )">
+<div caption="event:Add( )" created="20201113011756816" list-after="event:EnableGroup( )" modified="20210228011417529" tags="[[The Event Object]]" title="event:Add( )">
 <pre>&quot;&quot;&quot;&lt;$link&gt;`event:Add( function, string:group = &quot;BeforeMethod&quot;, (optional) string:name )`&lt;/$link&gt;
-Add a function to an execution group. All functions in a given execution group run in a random order.
+Add a function to an execution group. All functions in a given execution group run in the order they are added.
 The execution groups that exist when an event is created are:&quot;&quot;&quot;
 
 * `BeforeMethod` -- runs before `event.method`
 * `Method` -- a protected group; contains a call to `event.method`
 * `AfterMethod` -- runs after `event.method`
 
-The `name` argument is optional, but may aid with debugging.</pre>
+If the `name` argument is not given, CORE will attempt to find a name for the function from the current environment. Names found in this way will be wrapped in arrows, `&lt;like this&gt;`. 
+
+* Note that if the function is local or contained within a table, an automatic name cannot be generated. In these cases, the given name will be the result of `tostring(function)`</pre>
 </div>
-<div caption="event:Call( )" created="20201113012306453" list-after="" modified="20210125035354723" tags="[[The Event Object]]" title="event:Call( )">
+<div caption="event:Call( )" created="20201113012306453" list-after="" modified="20210228011225138" tags="[[The Event Object]]" title="event:Call( )">
 <pre>&quot;&quot;&quot;&lt;$link&gt;`event:Call( ... )`&lt;/$link&gt;
 Iterates through every group in order, running all functions with the given arguments. Functionally identical to `event()`
 Returns two arguments, `result` and `broken`: &quot;&quot;&quot;
@@ -12730,6 +12739,10 @@ Analogous to CreateLayer, creating a new group of functions which will all be ex
 * `first` -- the new group will execute before any other currently groups.
 * `last` -- the new group will execute after other currently created groups.</pre>
 </div>
+<div created="20210228011003646" list-after="event:Call( )" modified="20210228011343841" tags="[[The Event Object]]" title="event:Debug( )">
+<pre>&quot;&quot;&quot;&lt;$link&gt;`event:Debug()`&lt;/$link&gt;
+Returns a pretty-print string of each execution group and their associated functions, in execution order. Shows whether groups are enabled/disabled, and the registered names for each function. &quot;&quot;&quot;</pre>
+</div>
 <div caption="event:DisableGroup( )" created="20201113005450029" list-after="event:CreateGroup( )" modified="20210125035532785" tags="[[The Event Object]]" title="event:DisableGroup( )">
 <pre>&quot;&quot;&quot;&lt;$link&gt;`event:DisableGroup( string:group )`&lt;/$link&gt;
 Prevent a certain group from executing when the event is run.&quot;&quot;&quot;</pre>
@@ -12738,9 +12751,9 @@ Prevent a certain group from executing when the event is run.&quot;&quot;&quot;<
 <pre>&quot;&quot;&quot;&lt;$link&gt;`event:EnableGroup ( string:group )`&lt;/$link&gt;
 Enable a previously disabled group. You can check whether a group is disabled by looking for `event.list.(group name).is_disabled`&quot;&quot;&quot;</pre>
 </div>
-<div caption="event:Remove( )" created="20201113011921419" list-after="event:Add( )" modified="20210125035433464" tags="[[The Event Object]]" title="event:Remove( )">
-<pre>&quot;&quot;&quot;&lt;$link&gt;`event:Remove( function, string:group = &quot;BeforeMethod )`&lt;/$link&gt;
-Remove a previously added function from the given execution group.&quot;&quot;&quot;</pre>
+<div caption="event:Remove( )" created="20201113011921419" list-after="event:Add( )" modified="20210228010321697" tags="[[The Event Object]]" title="event:Remove( )">
+<pre>&quot;&quot;&quot;&lt;$link&gt;`event:Remove( function )`&lt;/$link&gt;
+Remove a previously added function from the event.&quot;&quot;&quot;</pre>
 </div>
 <div caption="event.method" created="20201113004938916" list-before="event:CreateGroup( )" modified="20210125035216077" tags="[[The Event Object]]" title="event.method">
 <pre>&lt;$link&gt;`event.method`&lt;/$link&gt; -- An event's primary function. Initialized as the argument to CreateEvent</pre>
@@ -12790,7 +12803,7 @@ Having the accessed table allows you to get and set values to / from the origina
 
 &lt;/div&gt;</pre>
 </div>
-<div caption="The Event Object" created="20201113012455237" modified="20210125035532793" tags="[[CORE Events]]" title="The Event Object">
+<div caption="The Event Object" created="20201113012455237" modified="20210228011025336" tags="[[CORE Events]]" title="The Event Object">
 <pre>{{CreateEvent( )}}
 
 {{event.method}}
@@ -12805,7 +12818,9 @@ Having the accessed table allows you to get and set values to / from the origina
 
 {{event:Remove( )}}
 
- {{event:Call( )}}</pre>
+{{event:Call( )}}
+
+{{event:Debug( )}}</pre>
 </div>
 <div created="20210125045758697" modified="20210125050414800" tags="[[Changed Functions]]" title="type( var )">
 <pre>The `type()` function now searches for a `__type` metamethod for tables. If one exists, it returns this as the object type of the table. This is used in CORE to better mimic object types, such as Events and wrapped Userdata.</pre>
