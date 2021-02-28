@@ -157,7 +157,7 @@ function EventFunctions:Add(func, chosen_set, name)
 	if chosen_set == "Method" then error('The Method set is reserved for this event\'s ".method" function.', 2) end
 	--Set up defaults.
 	chosen_set = chosen_set or "BeforeMethod"
-	name = name or "<" .. ( find_index(_ENV,func) or "no name given/discovered") .. ">"
+	name = name or "<" .. ( find_index(_ENV,func) or tostring(func)) .. ">"
 	--Make sure the chosen set actually exists.
 	local set = self.list[chosen_set]
 	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
