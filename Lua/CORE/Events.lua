@@ -117,7 +117,7 @@ function EventFunctions:CreateGroup(name, position, before)
 	check_if_in_list(self.list, name)
 	check_if_not_in_list(self.list, position)
 	-- Initiate table and place it in the list.
-	local newset = {methods = {}, dictionary = {}}
+	local newset = {methods = {}}
 	self.list[name] = newset
 	-- Insert the new table.
 	if before == true then
@@ -139,25 +139,27 @@ end
 -- Defaults to BeforeMethod, for no particular reason.
 function EventFunctions:Add(func, chosen_set, name)
 	--error checking
+	if self.dictionary[func] then
+		error('given function has already been added to this event as "' .. self.dictionary[func] .. '"', 2)
+	end
 	if not func then error("must pass in a function", 2) end
 	local temp_mt = getmetatable(func)
-	if func then
-		if not (type(func) == "function") then
-			if not (temp_mt and temp_mt.__call) then
-			error("cannot add <" .. type(func) .."> to execution group"
-				.. ".\nRequested object must be a function or a callable table.",2)
-		end end
+	if not (type(func) == "function") then
+		if not (temp_mt and temp_mt.__call) then
+		error("cannot add <" .. type(func) .."> to execution group"
+			.. ".\nRequested object must be a function or a callable table.",2)
+		end
 	end
 	--Make sure people don't mess with the "Method" set.
 	if chosen_set == "Method" then error('The Method set is reserved for this event\'s ".method" function.', 2) end
 	--Set up defaults.
 	chosen_set = chosen_set or "BeforeMethod"
-	name = name or "< " .. ( find_index(_ENV,func) or "no name given/discovered") .. " >"
+	name = name or "<" .. ( find_index(_ENV,func) or "no name given/discovered") .. ">"
 	--Make sure the chosen set actually exists.
 	local set = self.list[chosen_set]
 	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
 	--Add the function to the set.
-	set.dictionary[func] = name
+	self.dictionary[func] = name
 	table.insert(set.methods, func)
 end
 
@@ -175,7 +177,7 @@ function EventFunctions:Remove(func, chosen_set)
 	local res = find_index(set.methods, func)
 	if res then
 		table.remove(set.methods, res)
-		set.dictionary[func] = nil
+		self.dictionary[func] = nil
 	else
 		error("This event's set \"" .. chosen_set .. "\" does not contain the function <" .. tostring(func) .. ">", 2 )
 	end
@@ -239,7 +241,7 @@ function EventFunctions:Debug()
 		final = final .. (set.name .. ": " .. (set.is_disabled and "[disabled]" or "[enabled]") .. "\n")
 		for i, func in ipairs(set.methods) do
 			local name
-			final = final .. ("   > " .. i .. " - " .. set.dictionary[func] .. "\n")
+			final = final .. ("   > " .. i .. " - " .. self.dictionary[func] .. "\n")
 		end
 	end
 	return final
@@ -267,22 +269,23 @@ function CreateEvent(func)
 						  end
 						} )
 	--Initialize the default series of sets.
+	Event.dictionary = {}
 	Event.list = setmetatable({}, {__index = LList, 
 								   __call = function(tab)
 								      return tab:items()
 								   end
 							 	  } )
-	Event.list.BeforeMethod = {name = "BeforeMethod", methods = {}, dictionary = {}}
-	Event.list.AfterMethod = {name = "AfterMethod", methods = {}, dictionary = {}}
+	Event.list.BeforeMethod = {name = "BeforeMethod", methods = {}}
+	Event.list.AfterMethod = {name = "AfterMethod", methods = {}}
 	Event.list:insertFirst(Event.list.BeforeMethod)
 	Event.list:insertLast(Event.list.AfterMethod)
 
 	--Set up the method itself
 	Event.method = func or function() end
 	local callmethod = function(...) return Event.method(...) end -- so the method can be changed later
-	Event.list.Method = { name = "Method", methods = {callmethod}, dictionary = {[callmethod] = ".method"} }
+	Event.list.Method = { name = "Method", methods = {callmethod}}
+	Event.dictionary[callmethod] = ".method"
 	Event.list:insertAfter(Event.list.Method, Event.list.BeforeMethod)
 
 	return Event
 end
-
