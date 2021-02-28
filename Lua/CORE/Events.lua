@@ -139,6 +139,9 @@ end
 -- Defaults to BeforeMethod, for no particular reason.
 function EventFunctions:Add(func, chosen_set, name)
 	--error checking
+	if func == self.method then
+		error("cannot add .method function to its own event", 2)
+	end
 	if self.dictionary[func] then
 		error('given function has already been added to this event as <' .. self.dictionary[func][2].name .. '>: "'  .. self.dictionary[func][1] .. '"', 2)
 	end
@@ -166,6 +169,10 @@ end
 
 -- Remove a function from the waiting list. Requires a pointer to the function object.
 function EventFunctions:Remove(func)
+	-- protect Method
+	if func == self.method then
+		error("The .method function cannot be removed.", 2)
+	end
 	-- Check if the function has been added previously.
 	if not self.dictionary[func] then
 		error("The given function is not registered to the event.", 2)
