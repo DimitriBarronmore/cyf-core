@@ -140,7 +140,7 @@ end
 function EventFunctions:Add(func, chosen_set, name)
 	--error checking
 	if self.dictionary[func] then
-		error('given function has already been added to this event as "' .. self.dictionary[func] .. '"', 2)
+		error('given function has already been added to this event as <' .. self.dictionary[func][2].name .. '>: "'  .. self.dictionary[func][1] .. '"', 2)
 	end
 	if not func then error("must pass in a function", 2) end
 	local temp_mt = getmetatable(func)
@@ -159,7 +159,7 @@ function EventFunctions:Add(func, chosen_set, name)
 	local set = self.list[chosen_set]
 	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
 	--Add the function to the set.
-	self.dictionary[func] = name
+	self.dictionary[func] = {name, set}
 	table.insert(set.methods, func)
 end
 
@@ -241,7 +241,7 @@ function EventFunctions:Debug()
 		final = final .. (set.name .. ": " .. (set.is_disabled and "[disabled]" or "[enabled]") .. "\n")
 		for i, func in ipairs(set.methods) do
 			local name
-			final = final .. ("   > " .. i .. " - " .. self.dictionary[func] .. "\n")
+			final = final .. ("   > " .. i .. " - " .. self.dictionary[func][1] .. "\n")
 		end
 	end
 	return final
@@ -284,7 +284,7 @@ function CreateEvent(func)
 	Event.method = func or function() end
 	local callmethod = function(...) return Event.method(...) end -- so the method can be changed later
 	Event.list.Method = { name = "Method", methods = {callmethod}}
-	Event.dictionary[callmethod] = ".method"
+	Event.dictionary[callmethod] = {".method", Event.list.Method}
 	Event.list:insertAfter(Event.list.Method, Event.list.BeforeMethod)
 
 	return Event
