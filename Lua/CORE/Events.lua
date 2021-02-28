@@ -165,22 +165,16 @@ end
 
 
 -- Remove a function from the waiting list. Requires a pointer to the function object.
-function EventFunctions:Remove(func, chosen_set)
-	--Make sure people don't mess with the "Method" set.
-	if chosen_set == "Method" then error('The Method set is reserved for this event\'s ".method" function.', 2) end
-	--Set up defaults.
-	chosen_set = chosen_set or "BeforeMethod"
-	--Make sure the chosen set actually exists.
-	local set = self.list[chosen_set]
-	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
-	--Remove the function, if it's previously been added.
-	local res = find_index(set.methods, func)
-	if res then
-		table.remove(set.methods, res)
-		self.dictionary[func] = nil
-	else
-		error("This event's set \"" .. chosen_set .. "\" does not contain the function <" .. tostring(func) .. ">", 2 )
+function EventFunctions:Remove(func)
+	-- Check if the function has been added previously.
+	if not self.dictionary[func] then
+		error("The given function is not registered to the event.", 2)
 	end
+	--Remove the function, if it's previously been added.
+	set = self.dictionary[func][2]
+	local res = find_index(set.methods, func)
+	table.remove(set.methods, res)
+	self.dictionary[func] = nil
 end
 
 -- Prevent a group of functions from running with the event.
