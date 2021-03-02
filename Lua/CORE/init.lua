@@ -2,23 +2,26 @@
 --[[
 	
 	This file automatically initializes all major CORE libraries.
-	You don't really need to use it, but you can. You can add and remove stuff as well.
+	Feel free to add and remove stuff as well, 
+	but remember that certain libraries depend on the functionality of others.
 
 --]]
 
--- big libraries
+-- just about everything relies on this in one way or another
 require "CORE/Setup/changed_functions"
+
+-- big libraries, in order
 require "CORE/Events"
 require "CORE/Setup/initialize_events"
 require "CORE/Overwrite"
 
--- specific script libraries
+-- script-specific libraries
 local enc = SetButtonLayer
 local mons = Kill
 local wave = EndWave
 
 if (not (mons or wave)) or enc then -- Encounter-only
-	require "CORE/Inheritance"
+	--require "CORE/Inheritance"
 end
 
 -- smaller libraries

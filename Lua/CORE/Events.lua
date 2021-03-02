@@ -127,13 +127,6 @@ function EventFunctions:CreateGroup(name, position, before)
 	end
 end
 
-local find_index = function(tab, target)
-	for i,v in pairs(tab) do
-		if v == target then return i end
-	end
-	return false
-end
-
 -- Place a function into the waiting list, with optional name for debugging purposes.
 -- Doesn't error if you put in something other than a function, but it WILL crash anyways.
 -- Defaults to BeforeMethod, for no particular reason.
@@ -157,7 +150,7 @@ function EventFunctions:Add(func, chosen_set, name)
 	if chosen_set == "Method" then error('The Method set is reserved for this event\'s ".method" function.', 2) end
 	--Set up defaults.
 	chosen_set = chosen_set or "BeforeMethod"
-	name = name or "<" .. ( find_index(_ENV,func) or tostring(func)) .. ">"
+	name = name or "<" .. ( table.findindex(_ENV,func) or tostring(func)) .. ">"
 	--Make sure the chosen set actually exists.
 	local set = self.list[chosen_set]
 	if not set then error('This event has no set "' .. chosen_set .. '"', 2) end
@@ -179,7 +172,7 @@ function EventFunctions:Remove(func)
 	end
 	--Remove the function, if it's previously been added.
 	set = self.dictionary[func][2]
-	local res = find_index(set.methods, func)
+	local res = table.findindex(set.methods, func)
 	table.remove(set.methods, res)
 	self.dictionary[func] = nil
 end
