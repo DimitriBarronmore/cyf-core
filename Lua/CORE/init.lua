@@ -10,7 +10,7 @@
 -- just about everything relies on this in one way or another
 require "CORE/Setup/changed_functions"
 
--- big libraries, in order
+-- big libraries, in necessary order
 require "CORE/Events"
 require "CORE/Setup/initialize_events"
 require "CORE/Overwrite"
@@ -25,4 +25,4 @@ if (not (mons or wave)) or enc then -- Encounter-only
 end
 
 -- smaller libraries
-require "CORE/Types/ordered_dict"
+--require "CORE/Types/ordered_dict"
