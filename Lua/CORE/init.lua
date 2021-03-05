@@ -15,13 +15,15 @@ require "CORE/Events"
 require "CORE/Setup/initialize_events"
 require "CORE/Overwrite"
 
--- script-specific libraries
+-- script-specific libraries, just in case
 local enc = SetButtonLayer
 local mons = Kill
 local wave = EndWave
 
 if (not (mons or wave)) or enc then -- Encounter-only
 	require "CORE/Inheritance"
+	require "CORE/Setup/initialize_wave_sandbox"
+
 end
 
 -- smaller libraries

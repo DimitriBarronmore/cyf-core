@@ -229,6 +229,8 @@ Error message and password prompt
 
 <li>$:/state/Excise/--1513149762/tagnew</li>
 
+<li>$:/state/Excise/--419969498/tagnew</li>
+
 <li>$:/state/Excise/--679829452/tagnew</li>
 
 <li>$:/state/Excise/-1415567817/tagnew</li>
@@ -613,6 +615,8 @@ Error message and password prompt
 
 <li>$:/view</li>
 
+<li>active_waves</li>
+
 <li>AddToSandbox( )</li>
 
 <li>break_event</li>
@@ -631,11 +635,15 @@ Error message and password prompt
 
 <li>CORE_Events</li>
 
+<li>CORE_Inheritance</li>
+
 <li>CORE_Overwrite</li>
 
 <li>CreateEvent( )</li>
 
 <li>custom/caption-titles</li>
+
+<li>end_waves_simultaneously</li>
 
 <li>event:Add( )</li>
 
@@ -699,12 +707,12 @@ Error message and password prompt
 
 {{break_event}}</pre>
 </div>
-<div caption="Special Variables" created="20210305062831199" modified="20210305063207686" tags="[[CORE Inheritance]]" title="[INHERITANCE] Special Variables">
-<pre>`CORE_Inheritance = true` -- A simple boolean you can use to tell if CORE Inheritance is loaded in the current script.
+<div caption="Special Variables" created="20210305062831199" modified="20210305063955996" tags="[[CORE Inheritance]]" title="[INHERITANCE] Special Variables">
+<pre>{{CORE_Inheritance}}
 
-`end_waves_simultaneously = true` -- Determines whether calling EndWave( ) in a wave script will end every wave or only the wave it's called in. 
+{{end_waves_simultaneously}}
 
-&quot;&quot;&quot;''[IMPORTANT]'' `active_waves` -- Functional equivalent to the `Wave` table in unmodified CYF. &quot;&quot;&quot;</pre>
+{{active_waves}}</pre>
 </div>
 <div caption="[WARNING]" created="20210305062904992" modified="20210305063230165" tags="[[CORE Inheritance]]" title="[INHERITANCE] WARNING">
 <pre>&quot;&quot;&quot;Inheritance adds a new execution group to the `EnemyDialogueEnding` event named `CORE_Post`. When this group activates, it loads the upcoming waves by replacing the contents of the `nextwaves` table with &quot;wave_loader&quot;. Ensure all waves to be loaded are added before this point.
@@ -11247,6 +11255,9 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div created="20210228010949426" modified="20210228010949426" title="$:/state/Excise/--1513149762/tagnew">
 <pre>yes</pre>
 </div>
+<div created="20210305063901029" modified="20210305063901029" title="$:/state/Excise/--419969498/tagnew">
+<pre>yes</pre>
+</div>
 <div created="20210125055757188" modified="20210125055757188" title="$:/state/Excise/--679829452/tagnew">
 <pre>yes</pre>
 </div>
@@ -11349,20 +11360,20 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div created="20210125043518517" modified="20210125043518518" title="$:/state/toc/Table Of Contents/CORE Events-[EVENTS] Special Variables-1461748853">
 <pre>open</pre>
 </div>
-<div created="20210125043559804" modified="20210125061200452" title="$:/state/toc/Table Of Contents/CORE Events-[EVENTS] Special Variables-2084563383">
-<pre>close</pre>
+<div created="20210125043559804" modified="20210305063614486" title="$:/state/toc/Table Of Contents/CORE Events-[EVENTS] Special Variables-2084563383">
+<pre>open</pre>
 </div>
 <div created="20210125043519471" modified="20210125043519471" title="$:/state/toc/Table Of Contents/CORE Events-The Event Object-1461748853">
 <pre>open</pre>
 </div>
-<div created="20210125043601985" modified="20210125061206741" title="$:/state/toc/Table Of Contents/CORE Events-The Event Object-2084563383">
-<pre>close</pre>
+<div created="20210125043601985" modified="20210305063533904" title="$:/state/toc/Table Of Contents/CORE Events-The Event Object-2084563383">
+<pre>open</pre>
 </div>
 <div created="20210125060737868" modified="20210125061129252" title="$:/state/toc/Table Of Contents/CORE Overwrite-[OVERWRITE] Special Variables-1461748853">
 <pre>open</pre>
 </div>
-<div created="20210125061201711" modified="20210125061202882" title="$:/state/toc/Table Of Contents/CORE Overwrite-[OVERWRITE] Special Variables-2084563383">
-<pre>close</pre>
+<div created="20210125061201711" modified="20210305063633563" title="$:/state/toc/Table Of Contents/CORE Overwrite-[OVERWRITE] Special Variables-2084563383">
+<pre>open</pre>
 </div>
 <div created="20210125045928592" modified="20210125061143375" title="$:/state/toc/Table Of Contents/Misc.-Changed Functions-1461748853">
 <pre>open</pre>
@@ -11451,7 +11462,7 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20210305054810425" list="[[Main Page]] [[Table Of Contents]]" modified="20210305063153655" title="$:/StoryList">
+<div created="20210305054810425" list="[[Main Page]] CORE_Overwrite [[Table Of Contents]] [[[INHERITANCE] Special Variables]]" modified="20210305063746476" title="$:/StoryList">
 <pre></pre>
 </div>
 <div created="20201108165852924" list="$:/core/ui/Buttons/fold-bar $:/core/ui/Buttons/more-tiddler-actions $:/core/ui/Buttons/fold-others $:/core/ui/Buttons/fold $:/core/ui/Buttons/info $:/core/ui/Buttons/new-here $:/core/ui/Buttons/new-journal-here $:/core/ui/Buttons/clone $:/core/ui/Buttons/export-tiddler $:/core/ui/Buttons/edit $:/core/ui/Buttons/delete $:/core/ui/Buttons/permalink $:/core/ui/Buttons/permaview $:/core/ui/Buttons/open-window $:/core/ui/Buttons/close-others $:/core/ui/Buttons/close" modified="20201108165859551" title="$:/tags/ViewToolbar">
@@ -12639,6 +12650,9 @@ This plugin also requires the JSZip plugin ([[$:/plugins/tiddlywiki/jszip]]) to 
 <div created="20201108165220444" modified="20201108165236685" title="$:/view">
 <pre>classic</pre>
 </div>
+<div created="20210305063951257" modified="20210305063951257" tags="[[[INHERITANCE] Special Variables]]" title="active_waves">
+<pre>''[IMPORTANT]'' &lt;$link&gt;`active_waves`&lt;/$link&gt; -- Functional equivalent to the `Wave` table in unmodified CYF.</pre>
+</div>
 <div created="20210305063007441" modified="20210305063007441" tags="[[CORE Inheritance]]" title="AddToSandbox( )">
 <pre>&lt;$link&gt;`AddToSandbox(string:target)`&lt;/$link&gt; &quot;&quot;&quot;
 
@@ -12746,6 +12760,9 @@ end
 <div caption="CORE_Events" created="20201109045555890" modified="20210125034827667" tags="[[[EVENTS] Special Variables]] $:/hidetitle" title="CORE_Events">
 <pre>&lt;$link&gt;`CORE_Events = true`&lt;/$link&gt; -- A simple boolean you can use to detect if CORE Events is active in the current script.</pre>
 </div>
+<div created="20210305063901775" modified="20210305063901775" tags="[[[INHERITANCE] Special Variables]]" title="CORE_Inheritance">
+<pre>&lt;$link&gt;`CORE_Inheritance = true`&lt;/$link&gt; -- A simple boolean you can use to tell if CORE Inheritance is loaded in the current script.</pre>
+</div>
 <div created="20210125055804675" modified="20210125060735294" tags="[[[OVERWRITE] Special Variables]]" title="CORE_Overwrite">
 <pre>&lt;$link&gt;`CORE_Overwrite = true`&lt;/$link&gt; -- A simple boolean you can use to tell if CORE Overwrite is loaded in the current script.</pre>
 </div>
@@ -12763,6 +12780,9 @@ Takes a function object or callable table and returns an event object with [[eve
 
 
 </pre>
+</div>
+<div created="20210305063920693" modified="20210305063920693" tags="[[[INHERITANCE] Special Variables]]" title="end_waves_simultaneously">
+<pre>&lt;$link&gt;`end_waves_simultaneously = true`&lt;/$link&gt; -- Determines whether calling EndWave( ) in a wave script will end every wave or only the wave it's called in. </pre>
 </div>
 <div caption="event:Add( )" created="20201113011756816" list-after="event:EnableGroup( )" modified="20210228011417529" tags="[[The Event Object]]" title="event:Add( )">
 <pre>&quot;&quot;&quot;&lt;$link&gt;`event:Add( function, string:group = &quot;BeforeMethod&quot;, (optional) string:name )`&lt;/$link&gt;
