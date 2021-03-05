@@ -110,7 +110,7 @@ local listener_index = function(t,k)  -- I honestly wish this wasn't so complica
 
 		-- Type check; for some reason __call metamethods cause the operation to
 		-- take place on the table with said metamethod rather than the original object.
-		-- Disabled in case someone actually wants to return a table with a __call method.
+		-- Note: Check was disabled in case someone actually wants to return a table with a __call method.
 
 		--[[ret, err = pcall(function()return getmetatable(t._get[k]).__call end )
 		if ret then error("This wrapper does not work with __call metamethods.", 2) end--]]
