@@ -68,7 +68,6 @@ function WrapUserdata(usrdata)
 
 	local new_object = {}
 	new_object.userdata = usrdata
-	new_object.is_wrapped = true
 
 	local __tostring = tostring(new_object.userdata)
 	
