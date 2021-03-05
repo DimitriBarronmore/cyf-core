@@ -135,7 +135,7 @@ local function captureWaves()
 	nextwaves = {'wave_loader'}
 end
 EnemyDialogueEnding:CreateGroup("CORE_Post","last")
-EnemyDialogueEnding:Add(captureWaves,"CORE_Post")
+EnemyDialogueEnding:Add(captureWaves,"CORE_Post", "captureWaves")
 
 
 -- Unfortunately, this is necessary as load() is currently broken in CYF.
@@ -169,9 +169,18 @@ local function newbullet(abs, env, list, ...)
 	return proj
 end
 
-local function defaultonhit()
+local function defaultonhit(bullet)
 	Player.Hurt(3)
 end
+
+local function redirect_onhit(bullet)
+	wave = bullet.GetVar("wave_inheritance_script")
+	if wave then
+		wave.OnHit(bullet)
+		return break_event
+	end
+end
+OnHit:Add(redirect_onhit, "BeforeMethod", "redirect_onhit")
 
 local function endwave(wave, realwave, bullets)
 	wave.EndingWave()
