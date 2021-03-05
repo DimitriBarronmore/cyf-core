@@ -11,4 +11,3 @@ AddToSandbox("WrapUserdata")
 AddToSandbox("IndexListener")
 
 -- inheritance
-AddToSandbox("CORE_Inheritance")
