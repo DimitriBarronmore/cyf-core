@@ -21,7 +21,7 @@ local mons = Kill
 local wave = EndWave
 
 if (not (mons or wave)) or enc then -- Encounter-only
-	--require "CORE/Inheritance"
+	require "CORE/Inheritance"
 end
 
 -- smaller libraries
