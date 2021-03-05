@@ -143,6 +143,10 @@ Error message and password prompt
 
 <li>[EVENTS] Special Variables</li>
 
+<li>[INHERITANCE] Special Variables</li>
+
+<li>[INHERITANCE] WARNING</li>
+
 <li>[OVERWRITE] Special Variables</li>
 
 <li>$:/config/DefaultSidebarTab</li>
@@ -233,6 +237,8 @@ Error message and password prompt
 
 <li>$:/state/Excise/-1533567459/tagnew</li>
 
+<li>$:/state/Excise/-2129911379/tagnew</li>
+
 <li>$:/state/Excise/-498728207/tagnew</li>
 
 <li>$:/state/folded/$:/ControlPanel</li>
@@ -278,6 +284,10 @@ Error message and password prompt
 <li>$:/state/toc/Table Of Contents-CORE Events-1461748853</li>
 
 <li>$:/state/toc/Table Of Contents-CORE Events-2084563383</li>
+
+<li>$:/state/toc/Table Of Contents-CORE Inheritance-1857887713</li>
+
+<li>$:/state/toc/Table Of Contents-CORE Inheritance-2084563383</li>
 
 <li>$:/state/toc/Table Of Contents-CORE Overwrite-1461748853</li>
 
@@ -603,6 +613,8 @@ Error message and password prompt
 
 <li>$:/view</li>
 
+<li>AddToSandbox( )</li>
+
 <li>break_event</li>
 
 <li>Changed Functions</li>
@@ -610,6 +622,8 @@ Error message and password prompt
 <li>CORE Design Philosophy</li>
 
 <li>CORE Events</li>
+
+<li>CORE Inheritance</li>
 
 <li>CORE Overwrite</li>
 
@@ -647,6 +661,8 @@ Error message and password prompt
 
 <li>Misc.</li>
 
+<li>RemoveFromSandbox( )</li>
+
 <li>Table Of Contents</li>
 
 <li>The Event Object</li>
@@ -682,6 +698,18 @@ Error message and password prompt
 &quot;&quot;&quot;
 
 {{break_event}}</pre>
+</div>
+<div caption="Special Variables" created="20210305062831199" modified="20210305063207686" tags="[[CORE Inheritance]]" title="[INHERITANCE] Special Variables">
+<pre>`CORE_Inheritance = true` -- A simple boolean you can use to tell if CORE Inheritance is loaded in the current script.
+
+`end_waves_simultaneously = true` -- Determines whether calling EndWave( ) in a wave script will end every wave or only the wave it's called in. 
+
+&quot;&quot;&quot;''[IMPORTANT]'' `active_waves` -- Functional equivalent to the `Wave` table in unmodified CYF. &quot;&quot;&quot;</pre>
+</div>
+<div caption="[WARNING]" created="20210305062904992" modified="20210305063230165" tags="[[CORE Inheritance]]" title="[INHERITANCE] WARNING">
+<pre>&quot;&quot;&quot;Inheritance adds a new execution group to the `EnemyDialogueEnding` event named `CORE_Post`. When this group activates, it loads the upcoming waves by replacing the contents of the `nextwaves` table with &quot;wave_loader&quot;. Ensure all waves to be loaded are added before this point.
+
+Due to constraints with CYF, overwriting the `Wave` table with the currently loaded wave sandboxes causes an engine error. Use `active_waves` for interacting with loaded waves instead, but be careful of indexes changing if waves are set to end individually.&quot;&quot;&quot;</pre>
 </div>
 <div caption="Special Variables" created="20210125060618334" list-before="" modified="20210125060710389" tags="[[CORE Overwrite]]" title="[OVERWRITE] Special Variables">
 <pre>!!Special Variables
@@ -11231,6 +11259,9 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div created="20201109044005939" modified="20201109044005939" title="$:/state/Excise/-1533567459/tagnew">
 <pre>yes</pre>
 </div>
+<div created="20210305062830464" modified="20210305062830464" title="$:/state/Excise/-2129911379/tagnew">
+<pre>yes</pre>
+</div>
 <div created="20210125045751903" modified="20210125045751903" title="$:/state/Excise/-498728207/tagnew">
 <pre>yes</pre>
 </div>
@@ -11300,8 +11331,14 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div created="20210125043558251" modified="20210125061210172" title="$:/state/toc/Table Of Contents-CORE Events-2084563383">
 <pre>open</pre>
 </div>
-<div created="20210125055807880" modified="20210125061215771" title="$:/state/toc/Table Of Contents-CORE Overwrite-1461748853">
-<pre>close</pre>
+<div created="20210305063143546" modified="20210305063143546" title="$:/state/toc/Table Of Contents-CORE Inheritance-1857887713">
+<pre>open</pre>
+</div>
+<div created="20210305063149388" modified="20210305063149388" title="$:/state/toc/Table Of Contents-CORE Inheritance-2084563383">
+<pre>open</pre>
+</div>
+<div created="20210125055807880" modified="20210305060105144" title="$:/state/toc/Table Of Contents-CORE Overwrite-1461748853">
+<pre>open</pre>
 </div>
 <div created="20210125061154069" modified="20210125061154069" title="$:/state/toc/Table Of Contents-CORE Overwrite-2084563383">
 <pre>open</pre>
@@ -11414,7 +11451,7 @@ very-muted-foreground: #888888&lt;/pre&gt;</pre>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20210228003509432" list="[[Main Page]] [[The Event Object]] [[event:Remove( )]] [[event:Add( )]] [[event:Call( )]] [[event:Debug( )]]" modified="20210228011230634" title="$:/StoryList">
+<div created="20210305054810425" list="[[Main Page]] [[Table Of Contents]]" modified="20210305063153655" title="$:/StoryList">
 <pre></pre>
 </div>
 <div created="20201108165852924" list="$:/core/ui/Buttons/fold-bar $:/core/ui/Buttons/more-tiddler-actions $:/core/ui/Buttons/fold-others $:/core/ui/Buttons/fold $:/core/ui/Buttons/info $:/core/ui/Buttons/new-here $:/core/ui/Buttons/new-journal-here $:/core/ui/Buttons/clone $:/core/ui/Buttons/export-tiddler $:/core/ui/Buttons/edit $:/core/ui/Buttons/delete $:/core/ui/Buttons/permalink $:/core/ui/Buttons/permaview $:/core/ui/Buttons/open-window $:/core/ui/Buttons/close-others $:/core/ui/Buttons/close" modified="20201108165859551" title="$:/tags/ViewToolbar">
@@ -12602,6 +12639,11 @@ This plugin also requires the JSZip plugin ([[$:/plugins/tiddlywiki/jszip]]) to 
 <div created="20201108165220444" modified="20201108165236685" title="$:/view">
 <pre>classic</pre>
 </div>
+<div created="20210305063007441" modified="20210305063007441" tags="[[CORE Inheritance]]" title="AddToSandbox( )">
+<pre>&lt;$link&gt;`AddToSandbox(string:target)`&lt;/$link&gt; &quot;&quot;&quot;
+
+Adds a string value to the wave constructor's list of targets. Every time the defense phase begins, variables named in this list are copied into each wave's environment for direct use. Tables are deep-copied, as to better protect them from interference.&quot;&quot;&quot;</pre>
+</div>
 <div caption="break_event" created="20201109061325241" list-after="CORE_Events" modified="20210125035724582" tags="[[[EVENTS] Special Variables]] $:/hidetitle" title="break_event">
 <pre>&lt;$link&gt;`break_event`&lt;/$link&gt; -- A function which does nothing, used as a unique keyword.
 
@@ -12631,6 +12673,21 @@ A cleaner version of the concept put forth in Monster Events.
 ---
 !![[The Event Object]]
 {{The Event Object}}</pre>
+</div>
+<div created="20210305054814989" list-after="CORE Overwrite" modified="20210305063137241" tags="[[Table Of Contents]]" title="CORE Inheritance">
+<pre>&quot;&quot;&quot;A wave sandbox which enables variables to be passed directly into wave files with very few necessary changes. Doesn't add much functionality by itself, but makes some inter-script wizardry a bit easier.&quot;&quot;&quot;
+
+!!Special Variables
+{{[INHERITANCE] Special Variables}}
+
+!![WARNING]
+{{[INHERITANCE] WARNING}}
+
+!!Functions
+{{AddToSandbox( )}}
+
+{{RemoveFromSandbox( )}}
+</pre>
 </div>
 <div created="20210125043640065" list-after="CORE Events" modified="20210125061114700" tags="[[Table Of Contents]]" title="CORE Overwrite">
 <pre>A lightweight and modular userdata wrapper, built using metatables and potentially recursive.
@@ -12795,6 +12852,12 @@ Having the accessed table allows you to get and set values to / from the origina
 &lt;&lt;toc-selective-expandable 'Misc.'&gt;&gt;
 
 &lt;/div&gt;</pre>
+</div>
+<div created="20210305063019276" modified="20210305063019276" tags="[[CORE Inheritance]]" title="RemoveFromSandbox( )">
+<pre>&lt;$link&gt;`RemoveFromSandbox(string:target`&lt;/$link&gt; &quot;&quot;&quot;
+
+Removes a string value from the wave constructor's list of targets.&quot;&quot;&quot;
+</pre>
 </div>
 <div caption="Contents" created="20201108160258784" list-after="$:/core/ui/SideBar/Open" modified="20210125042205417" tags="$:/tags/SideBar" title="Table Of Contents" type="application/x-tiddler">
 <pre>&lt;div class=&quot;tc-table-of-contents&quot;&gt;

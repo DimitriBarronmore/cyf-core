@@ -16,7 +16,7 @@ CORE_Inheritance = true
 
 -- If this value is true, EndWave() will behave as it normally does.
 -- If this value is false, EndWave() will end only the wave it is called in.
-end_waves_simultaniously = true
+end_waves_simultaneously = true
 
 
 local sandbox = {}
@@ -177,7 +177,7 @@ local function endwave(wave, realwave, bullets)
 	wave.EndingWave()
 	table.remove(active_waves, table.findindex(active_waves,wave))
 
-	if end_waves_simultaniously == false then -- staggered ending
+	if end_waves_simultaneously == false then -- staggered ending
 		for i,v in ipairs(bullets) do -- clear local bullets
 			v.Remove() 
 		end
