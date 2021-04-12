@@ -108,13 +108,6 @@ end
 local listener_index = function(t,k)  -- I honestly wish this wasn't so complicated.
 	if t._get[k] then
 
-		-- Type check; for some reason __call metamethods cause the operation to
-		-- take place on the table with said metamethod rather than the original object.
-		-- Note: Check was disabled in case someone actually wants to return a table with a __call method.
-
-		--[[ret, err = pcall(function()return getmetatable(t._get[k]).__call end )
-		if ret then error("This wrapper does not work with __call metamethods.", 2) end--]]
-
 		-- Run and return functions, or simply return other values.
 		if (type(t._get[k]) == "function") then
 			return t._get[k](t)
@@ -133,9 +126,6 @@ end
 local listener_newindex = function(t,k,v)
 	if t._set[k] then
 
-		--[[ ret, err = pcall(function()return getmetatable(t._set[k]).__call end )
-		if ret then error("This wrapper does not work with __call metamethods.", 2) end --]]
-
 		if type(t._set[k]) == "function" then
 			t._set[k](t, v)
 		else 
@@ -143,14 +133,7 @@ local listener_newindex = function(t,k,v)
 		end
 	else
 		-- Use environment schenanigans as above to set values in the original object.
-
-		-- I need this error check because of load() funkiness. 
-		-- This is usually an invalid operation anyways.
-		if type(v) == "function" or type(v) == "table" then
-			error("This index cannot currently be set to an object of type <" .. type(v) 
-				..">. \nIf you wish to overwrite this field, please use WrapUserdata()", 2)
-		end
-		chunk = load("t._self." .. k .. " = " .. v, "wrapper", "bt", {t = t, k = k, v = v})
+		chunk = load("t._self." .. k .. " = v", "wrapper", "bt", {t = t, k = k, v = v})
 		local _, ret = pcall(chunk)
 		if not _ then error(ret, 2) end
 		return ret
