@@ -8,6 +8,9 @@ local old_type = type
 function type(obj)
 	local obj_mt = getmetatable( obj ) or nil
 	if obj_mt then
+		if old_type(obj_mt.__type) == "function" then
+			return obj_mt.__type(t)
+		end
 		return obj_mt.__type or old_type(obj)
 	else
 		return old_type(obj)
