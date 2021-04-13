@@ -9,5 +9,6 @@ AddToSandbox("break_event")
 AddToSandbox("CORE_Overwrite")
 AddToSandbox("WrapUserdata")
 AddToSandbox("IndexListener")
+AddToSandbox("setupSpecial")
 
 -- inheritance

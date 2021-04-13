@@ -116,9 +116,6 @@ pull value from _get:
 --]]
 
 
-
-
-
 local listener_index = function(t,k)  -- I honestly wish this wasn't so complicated.
 	if t._get[k] == nil then return t._self[k] end
 	local keytype = type(t._get[k])
@@ -173,4 +170,132 @@ function IndexListener(input)
 
 	setmetatable(new_table, mt)
 	return new_table
+end
+
+local function accesserr() error("attempted to assign to a readonly value", 3) end
+
+local special_set_bullets = {
+	x = function(t,v) t._self.x = v end, 
+	y = function(t,v) t._self.y = v end, 
+	absx = function(t,v) t._self.absx = v end, 
+	absy = function(t,v) t._self.absy = v end, 
+	ppcollision = function(t,v) t._self.ppcollision = v end,  --b
+	ppchanged = function(t,v) t._self.ppchanged = v end,  --b
+	isactive = accesserr, --readonly
+	layer = function(t,v) t._self.layer = v end,
+	isPersistent = function(t,v) t._self.isPersistent = v end --b
+}
+
+local special_set_sprites = {
+	spritename = function(t,v) t._self.spritename = v end, 
+	x = function(t,v) t._self.x = v end, 
+	y = function(t,v) t._self.y = v end, 
+	absx = function(t,v) t._self.absx = v end, 
+	absy = function(t,v) t._self.absy = v end, 
+	xscale = function(t,v) t._self.xscale = v end,  
+	yscale = function(t,v) t._self.yscale = v end,  
+	isactive = accesserr, --readonly
+	width = accesserr, --readonly
+	height = accesserr, --readonly
+	xpivot = function(t,v) t._self.xpivot = v end,  
+	ypivot = function(t,v) t._self.ypivot = v end,  
+	animcomplete = accesserr, --readonly
+	currentframe = function(t,v) t._self.currentframe = v end,  
+	currenttime = function(t,v) t._self.currenttime = v end,  
+	animationspeed = function(t,v) t._self.animationspeed = v end,  
+	animationpaused = function(t,v) t._self.animationpaused = v end,  
+	loopmode = function(t,v) t._self.loopmode = v end,  
+	color = function(t,v) t._self.color = v end,  
+	color32 = function(t,v) t._self.color32 = v end,  
+	alpha = function(t,v) t._self.alpha = v end,  
+	alpha32 = function(t,v) t._self.alpha32 = v end,  
+	rotation = function(t,v) t._self.rotation = v end,  
+	layer = function(t,v) t._self.layer = v end,  
+	shader = function(t,v) t._self.shader = v end
+}
+
+local special_get_bullets = {
+	x = function(t) return t._self.x end, 
+	y = function(t) return t._self.y end, 
+	absx = function(t) return t._self.absx end, 
+	absy = function(t) return t._self.absy end, 
+	ppcollision = function(t) return t._self.ppcollision end,  --b
+	ppchanged = function(t) return t._self.ppchanged end,  --b
+	xscale = function(t) return t._self.xscale end,
+	isactive = function(t) return t._self.isactive end,  --readonly
+	layer = function(t) return t._self.layer end,
+	isPersistent = function(t) return t._self.isPersistent end 
+}
+
+local special_get_sprites = {
+	spritename = function(t) return t._self.spritename end, 
+	x = function(t) return t._self.x end, 
+	y = function(t) return t._self.y end, 
+	absx = function(t) return t._self.absx end, 
+	absy = function(t) return t._self.absy end, 
+	xscale = function(t) return t._self.xscale end, 
+	yscale = function(t) return t._self.yscale end,
+	isactive = function(t) return t._self.isactive end,  --readonly
+	width = function(t) return t._self.width end,   --readonly 
+	height = function(t) return t._self.height end,  --readonly 
+	xpivot = function(t) return t._self.xpivot end, 
+	ypivot = function(t) return t._self.ypivot end, 
+	animcomplete = function(t) return t._self.animcomplete end,  --readonly 
+	currentframe = function(t) return t._self.currentframe end, 
+	currenttime = function(t) return t._self.currenttime end, 
+	animationspeed = function(t) return t._self.animationspeed end, 
+	animationpaused = function(t) return t._self.animationpaused end, 
+	loopmode = function(t) return t._self.loopmode end, 
+	color = function(t) return t._self.color end, 
+	color32 = function(t) return t._self.color32 end, 
+	alpha = function(t) return t._self.alpha end,  
+	alpha32 = function(t) return t._self.alpha32 end,  
+	rotation = function(t) return t._self.rotation end,  
+	layer = function(t) return t._self.layer end
+}
+
+function setupSpecial(input)
+	--shared
+	rawset(input, "Move", input._self.Move)   --static, b, s
+	rawset(input, "MoveTo", input._self.MoveTo)  --static, b, s
+	rawset(input, "MoveToAbs", input._self.MoveToAbs)  --static, b, s
+	rawset(input, "SendToTop", input._self.SendToTop)  --static
+	rawset(input, "SendToBottom", input._self.SendToBottom)  --static
+	rawset(input, "Remove", input._self.Remove)  --static 
+	rawset(input, "SetVar", input._self.SetVar)  --static
+	rawset(input, "GetVar", input._self.GetVar)  --static
+
+	--bullets only
+	if tostring(input._self) == "ProjectileController" then
+		for k,v in pairs(special_set_bullets) do
+			input._set[k] = v
+		end
+		for k,v in pairs(special_get_bullets) do
+			input._get[k] = v
+		end
+		rawset(input, "ResetCollisionSystem", input._self.ResetCollisionSystem)  --static, b
+		rawset(input, "isColliding", input._self.isColliding)  --static, b
+		rawset(input, "isPersistent", input._self.isPersistent)  --b
+		rawset(input, "sprite", input._self.sprite)
+		return
+	end
+
+	--sprites only
+	for k,v in pairs(special_set_sprites) do
+		input._set[k] = v
+	end
+	for k,v in pairs(special_get_sprites) do
+		input._get[k] = v
+	end
+	rawset(input, "Set", input._self.Set)  --static 
+	rawset(input, "SetParent", input._self.SetParent)  --static 
+	rawset(input, "Mask", input._self.Mask)  --static 
+	rawset(input, "shader", input._self.shader)  
+	rawset(input, "SetPivot", input._self.SetPivot)  --static 
+	rawset(input, "SetAnchor", input._self.SetAnchor)  --static 
+	rawset(input, "Scale", input._self.Scale)  --static 
+	rawset(input, "SetAnimation", input._self.SetAnimation)  --static 
+	rawset(input, "StopAnimation", input._self.StopAnimation)  --static
+	rawset(input, "MoveBelow", input._self.MoveBelow)  --static
+	rawset(input, "Dust", input._self.Dust) 
 end
