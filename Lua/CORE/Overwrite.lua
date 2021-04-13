@@ -72,8 +72,8 @@ function WrapUserdata(usrdata)
 	local __tostring = tostring(new_object.userdata)
 	
 	local userdata_mt = {
-		__index = new_object.userdata,
-		__newindex = new_object.userdata,
+		__index = usrdata,
+		__newindex = usrdata,
 		__tostring = function() return __tostring end,
 		}
 	for k,v in pairs(userdata_metatable) do
@@ -102,41 +102,43 @@ end
 
 -- This necessarily breaks userdata objects with special behaviour for square-bracket indexing.
 -- That includes a number of CYF objects, such as bullets, sprites, and the audio library.
--- This is because all indexes passed to the original object are done using "table.index" notation.
+-- This is because all indexes passed to the original object are done using "table[index]" notation.
 -- Plan accordingly when creating libraries.
 
-local listener_index = function(t,k)  -- I honestly wish this wasn't so complicated.
-	if t._get[k] then
 
-		-- Run and return functions, or simply return other values.
-		if (type(t._get[k]) == "function") then
-			return t._get[k](t)
-		else
-			return t._get[k]
-		end
+--[[
+pull value from _get:
+	_get indexes to _self
+	if value is function, and not in _self:
+		run the function and reurn the result
+	else:
+		return the result
+--]]
+
+
+
+
+
+local listener_index = function(t,k)  -- I honestly wish this wasn't so complicated.
+	if t._get[k] == nil then return t._self[k] end
+	local keytype = type(t._get[k])
+	
+	-- Run and return functions, or simply return other values.
+	if keytype == "function" then
+		return t._get[k](t)
 	else
-		-- Use environment schenanigans to get the original dot-syntax value of the desired key.
-		chunk = load("return t._self." .. k, "wrapper", "bt", {t = t, k = k})
-		local _, ret = pcall(chunk)
-		if not _ then error(ret, 2) end
-		return ret
+		return t._get[k]
 	end
 end
 
 local listener_newindex = function(t,k,v)
-	if t._set[k] then
-
-		if type(t._set[k]) == "function" then
-			t._set[k](t, v)
-		else 
-			error("fields in ._set must be functions",2)
-		end
-	else
-		-- Use environment schenanigans as above to set values in the original object.
-		chunk = load("t._self." .. k .. " = v", "wrapper", "bt", {t = t, k = k, v = v})
-		local _, ret = pcall(chunk)
-		if not _ then error(ret, 2) end
-		return ret
+	if t._set[k] == nil then t._self[k] = v return end
+	local keytype = type(t._set[k])
+	
+	if keytype == "function" then
+		t._set[k](t, v)
+	else 
+		error("fields in ._set must be functions",2)
 	end
 end
 
