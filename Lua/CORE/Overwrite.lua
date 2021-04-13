@@ -1,10 +1,10 @@
 --[[
 
-	CORE Overwrite -- A lightweight and modular userdata wrapper for Lua. 
-	Inpspired from a library by and written with minor help from Eir#8327 (formerly known by WD20019)
+	CORE Overwrite -- A lightweight and modular userdata wrapper.
+	Inspired from a library by and written with minor help from Eir#8327
 	Designed for use in Create Your Frisk by https://github.com/DimitriBarronmore
 	
-	Copyright © 2020 Dimitri Barronmore¸Some Rights Reserved
+	Copyright © 2020-2021 Dimitri Barronmore¸Some Rights Reserved
 	Released under a Creative Commons Attribution 4.0 International license.
 	https://creativecommons.org/licenses/by/4.0/
 
@@ -56,10 +56,188 @@ local userdata_metatable = {
 	__pow = err_arithmetic }
 
 
+local function accesserr() error("attempted to assign to a readonly value", 3) end
+
+local special_set_bullets = {
+	x = function(t,v) t.userdata.x = v end, 
+	y = function(t,v) t.userdata.y = v end, 
+	absx = function(t,v) t.userdata.absx = v end, 
+	absy = function(t,v) t.userdata.absy = v end, 
+	ppcollision = function(t,v) t.userdata.ppcollision = v end,  --b
+	ppchanged = function(t,v) t.userdata.ppchanged = v end,  --b
+	isactive = accesserr, --readonly
+	layer = function(t,v) t.userdata.layer = v end,
+	isPersistent = function(t,v) t.userdata.isPersistent = v end --b
+}
+
+local special_set_sprites = {
+	spritename = function(t,v) t.userdata.spritename = v end, 
+	x = function(t,v) t.userdata.x = v end, 
+	y = function(t,v) t.userdata.y = v end, 
+	absx = function(t,v) t.userdata.absx = v end, 
+	absy = function(t,v) t.userdata.absy = v end, 
+	xscale = function(t,v) t.userdata.xscale = v end,  
+	yscale = function(t,v) t.userdata.yscale = v end,  
+	isactive = accesserr, --readonly
+	width = accesserr, --readonly
+	height = accesserr, --readonly
+	xpivot = function(t,v) t.userdata.xpivot = v end,  
+	ypivot = function(t,v) t.userdata.ypivot = v end,  
+	animcomplete = accesserr, --readonly
+	currentframe = function(t,v) t.userdata.currentframe = v end,  
+	currenttime = function(t,v) t.userdata.currenttime = v end,  
+	animationspeed = function(t,v) t.userdata.animationspeed = v end,  
+	animationpaused = function(t,v) t.userdata.animationpaused = v end,  
+	loopmode = function(t,v) t.userdata.loopmode = v end,  
+	color = function(t,v) t.userdata.color = v end,  
+	color32 = function(t,v) t.userdata.color32 = v end,  
+	alpha = function(t,v) t.userdata.alpha = v end,  
+	alpha32 = function(t,v) t.userdata.alpha32 = v end,  
+	rotation = function(t,v) t.userdata.rotation = v end,  
+	layer = function(t,v) t.userdata.layer = v end,  
+	shader = function(t,v) t.userdata.shader = v end
+}
+
+local special_get_bullets = {
+	x = function(t) return t.userdata.x end, 
+	y = function(t) return t.userdata.y end, 
+	absx = function(t) return t.userdata.absx end, 
+	absy = function(t) return t.userdata.absy end, 
+	ppcollision = function(t) return t.userdata.ppcollision end,  --b
+	ppchanged = function(t) return t.userdata.ppchanged end,  --b
+	xscale = function(t) return t.userdata.xscale end,
+	isactive = function(t) return t.userdata.isactive end,  --readonly
+	layer = function(t) return t.userdata.layer end,
+	isPersistent = function(t) return t.userdata.isPersistent end 
+}
+
+local special_get_sprites = {
+	spritename = function(t) return t.userdata.spritename end, 
+	x = function(t) return t.userdata.x end, 
+	y = function(t) return t.userdata.y end, 
+	absx = function(t) return t.userdata.absx end, 
+	absy = function(t) return t.userdata.absy end, 
+	xscale = function(t) return t.userdata.xscale end, 
+	yscale = function(t) return t.userdata.yscale end,
+	isactive = function(t) return t.userdata.isactive end,  --readonly
+	width = function(t) return t.userdata.width end,   --readonly 
+	height = function(t) return t.userdata.height end,  --readonly 
+	xpivot = function(t) return t.userdata.xpivot end, 
+	ypivot = function(t) return t.userdata.ypivot end, 
+	animcomplete = function(t) return t.userdata.animcomplete end,  --readonly 
+	currentframe = function(t) return t.userdata.currentframe end, 
+	currenttime = function(t) return t.userdata.currenttime end, 
+	animationspeed = function(t) return t.userdata.animationspeed end, 
+	animationpaused = function(t) return t.userdata.animationpaused end, 
+	loopmode = function(t) return t.userdata.loopmode end, 
+	color = function(t) return t.userdata.color end, 
+	color32 = function(t) return t.userdata.color32 end, 
+	alpha = function(t) return t.userdata.alpha end,  
+	alpha32 = function(t) return t.userdata.alpha32 end,  
+	rotation = function(t) return t.userdata.rotation end,  
+	layer = function(t) return t.userdata.layer end
+}
+
+local function setupAudio(input)
+	input.Play =  input.userdata.Play
+	input.Stop = input.userdata.Stop
+	input.Pause = input.userdata.Pause
+	input.Unpause = input.userdata.Unpause
+	input.Volume = input.userdata.Volume
+	input.Pitch = input.userdata.Pitch
+	input.LoadFile = input.userdata.LoadFile
+	input.PlaySound = input.userdata.PlaySound
+	input.StopAll = input.userdata.StopAll
+	input.PauseAll = input.userdata.PauseAll
+	input.UnpauseAll = input.userdata.UnpauseAll
+	input.SetSoundDictionary = input.userdata.SetSoundDictionary
+	input.GetSoundDictionary = input.userdata.GetSoundDictionary
+	input._get.playtime = function(t) return t.userdata.playtime end
+	input._set.playtime = function(t,v) t.userdata.playtime = v end
+	input._get.totaltime = function(t) return t.userdata.totaltime end
+	input._set.totaltime = accesserr
+end
+local function setupBullet(input)
+	input.Move =  input.userdata.Move   --static, b, s
+	input.MoveTo =  input.userdata.MoveTo  --static, b, s
+	input.MoveToAbs =  input.userdata.MoveToAbs  --static, b, s
+	input.SendToTop =  input.userdata.SendToTop  --static
+	input.SendToBottom =  input.userdata.SendToBottom  --static
+	input.Remove =  input.userdata.Remove  --static 
+	input.SetVar =  input.userdata.SetVar  --static
+	input.GetVar =  input.userdata.GetVar  --static
+
+	for k,v in pairs(special_set_bullets) do
+		input._set[k] = v
+	end
+	for k,v in pairs(special_get_bullets) do
+		input._get[k] = v
+	end
+	input.ResetCollisionSystem =  input.userdata.ResetCollisionSystem  --static, b
+	input.isColliding =  input.userdata.isColliding  --static, b
+	input.isPersistent =  input.userdata.isPersistent  --b
+	input.sprite =  input.userdata.sprite
+end
+local function setupSprite(input)
+	--shared
+	input.Move =  input.userdata.Move   --static, b, s
+	input.MoveTo =  input.userdata.MoveTo  --static, b, s
+	input.MoveToAbs =  input.userdata.MoveToAbs  --static, b, s
+	input.SendToTop =  input.userdata.SendToTop  --static
+	input.SendToBottom =  input.userdata.SendToBottom  --static
+	input.Remove =  input.userdata.Remove  --static 
+	input.SetVar =  input.userdata.SetVar  --static
+	input.GetVar =  input.userdata.GetVar  --static
+
+	for k,v in pairs(special_set_sprites) do
+		input._set[k] = v
+	end
+	for k,v in pairs(special_get_sprites) do
+		input._get[k] = v
+	end
+	input.Set =  input.userdata.Set  --static 
+	input.SetParent =  input.userdata.SetParent  --static 
+	input.Mask =  input.userdata.Mask  --static 
+	input.shader =  input.userdata.shader  
+	input.SetPivot =  input.userdata.SetPivot  --static 
+	input.SetAnchor =  input.userdata.SetAnchor  --static 
+	input.Scale =  input.userdata.Scale  --static 
+	input.SetAnimation =  input.userdata.SetAnimation  --static 
+	input.StopAnimation =  input.userdata.StopAnimation  --static
+	input.MoveBelow =  input.userdata.MoveBelow  --static
+	input.Dust =  input.userdata.Dust 
+end
+
+local listener_newindex = function(t,k,v)
+	if t._set[k] == nil then t.userdata[k] = v return end
+	local keytype = type(t._set[k])
+	
+	if keytype == "function" then
+		t._set[k](t, v)
+	else 
+		error("this wrapped userdata has a ._set field, " .. k .. ", which is not a function",2)
+	end
+end
+
+local listener_index = function(t,k) 
+	if t._get[k] == nil then return t.userdata[k] end
+	local keytype = type(t._get[k])
+	
+	if keytype == "function" then
+		return t._get[k](t)
+	else
+		return t._get[k]
+	end
+end
+
 -- Take a userdata object as input and spit out a replica.
 -- Requires my custom __type metamethod to output as type <userdata>.
 -- Values can be added/replaced using rawset() or Userdata.SetRaw()
 -- The original object is stored at the field ["userdata"]
+-- ._get and ._set are used like metamethods to perform actions or
+--    redirect values when a variable is accessed
+-- This causes odd behavior in sprites, bullets, and the audio object
+-- All fresh references will end up going through Get/SetVar or Get/SetSoundDictionary
 
 function WrapUserdata(usrdata)
 	if type(usrdata) ~= "userdata" then
@@ -68,12 +246,14 @@ function WrapUserdata(usrdata)
 
 	local new_object = {}
 	new_object.userdata = usrdata
+	new_object._get = {}
+	new_object._set = {}
 
 	local __tostring = tostring(new_object.userdata)
 	
 	local userdata_mt = {
-		__index = usrdata,
-		__newindex = usrdata,
+		__index = listener_index,
+		__newindex = listener_newindex,
 		__tostring = function() return __tostring end,
 		}
 	for k,v in pairs(userdata_metatable) do
@@ -89,213 +269,14 @@ function WrapUserdata(usrdata)
 		rawget(new_object, var)
 	end
 
+	if __tostring == "LuaSpriteController" then
+		setupSprite(new_object)
+	elseif __tostring == "ProjectileController" then
+		setupBullet(new_object)
+	elseif __tostring == "MusicManager" then
+		setupAudio(new_object)
+	end
+
 	setmetatable(new_object, userdata_mt)
-
 	return new_object
-end
-
-
--- Take an optional object/table and return a replica/blank table with _get and _set fields.
--- This allows you to give an object special behavior when certain fields are used.
--- Intended to be used in combination with wrapUserdata(), but can be used on anything.
--- The base object is stored at the field _self to allow for possible recursive wrapping.
-
--- This necessarily breaks userdata objects with special behaviour for square-bracket indexing.
--- That includes a number of CYF objects, such as bullets, sprites, and the audio library.
--- This is because all indexes passed to the original object are done using "table[index]" notation.
--- Plan accordingly when creating libraries.
-
-
---[[
-pull value from _get:
-	_get indexes to _self
-	if value is function, and not in _self:
-		run the function and reurn the result
-	else:
-		return the result
---]]
-
-
-local listener_index = function(t,k)  -- I honestly wish this wasn't so complicated.
-	if t._get[k] == nil then return t._self[k] end
-	local keytype = type(t._get[k])
-	
-	-- Run and return functions, or simply return other values.
-	if keytype == "function" then
-		return t._get[k](t)
-	else
-		return t._get[k]
-	end
-end
-
-local listener_newindex = function(t,k,v)
-	if t._set[k] == nil then t._self[k] = v return end
-	local keytype = type(t._set[k])
-	
-	if keytype == "function" then
-		t._set[k](t, v)
-	else 
-		error("fields in ._set must be functions",2)
-	end
-end
-
-local listener_eq = function(lhs, rhs)
-	return (pcall(function() return lhs._self end) and lhs._self or lhs) == (pcall(function() return rhs._self end) and rhs._self or rhs)
-end
-
-function IndexListener(input)
-	if not (type(input) == "table" or type(input) == "userdata") then 
-		error("tried to wrap object of type " .. type(input),2)
-	end
-
-	local new_table = {}
-	new_table._self = input or {}
-	new_table._get = {}
-	new_table._set = {}
-
-	local mt = {
-		__index = listener_index,
-		__newindex = listener_newindex,
-		__eq = listener_eq,
-		__type = type(input)
-	}
-
-	-- If the original object has a metatable, copy remaining fields in for utility reasons.
-	old_mt = getmetatable( input )
-	if old_mt then
-		for k,v in pairs(old_mt) do
-			if not mt[k] then mt[k] = v end
-		end
-	end
-
-	setmetatable(new_table, mt)
-	return new_table
-end
-
-local function accesserr() error("attempted to assign to a readonly value", 3) end
-
-local special_set_bullets = {
-	x = function(t,v) t._self.x = v end, 
-	y = function(t,v) t._self.y = v end, 
-	absx = function(t,v) t._self.absx = v end, 
-	absy = function(t,v) t._self.absy = v end, 
-	ppcollision = function(t,v) t._self.ppcollision = v end,  --b
-	ppchanged = function(t,v) t._self.ppchanged = v end,  --b
-	isactive = accesserr, --readonly
-	layer = function(t,v) t._self.layer = v end,
-	isPersistent = function(t,v) t._self.isPersistent = v end --b
-}
-
-local special_set_sprites = {
-	spritename = function(t,v) t._self.spritename = v end, 
-	x = function(t,v) t._self.x = v end, 
-	y = function(t,v) t._self.y = v end, 
-	absx = function(t,v) t._self.absx = v end, 
-	absy = function(t,v) t._self.absy = v end, 
-	xscale = function(t,v) t._self.xscale = v end,  
-	yscale = function(t,v) t._self.yscale = v end,  
-	isactive = accesserr, --readonly
-	width = accesserr, --readonly
-	height = accesserr, --readonly
-	xpivot = function(t,v) t._self.xpivot = v end,  
-	ypivot = function(t,v) t._self.ypivot = v end,  
-	animcomplete = accesserr, --readonly
-	currentframe = function(t,v) t._self.currentframe = v end,  
-	currenttime = function(t,v) t._self.currenttime = v end,  
-	animationspeed = function(t,v) t._self.animationspeed = v end,  
-	animationpaused = function(t,v) t._self.animationpaused = v end,  
-	loopmode = function(t,v) t._self.loopmode = v end,  
-	color = function(t,v) t._self.color = v end,  
-	color32 = function(t,v) t._self.color32 = v end,  
-	alpha = function(t,v) t._self.alpha = v end,  
-	alpha32 = function(t,v) t._self.alpha32 = v end,  
-	rotation = function(t,v) t._self.rotation = v end,  
-	layer = function(t,v) t._self.layer = v end,  
-	shader = function(t,v) t._self.shader = v end
-}
-
-local special_get_bullets = {
-	x = function(t) return t._self.x end, 
-	y = function(t) return t._self.y end, 
-	absx = function(t) return t._self.absx end, 
-	absy = function(t) return t._self.absy end, 
-	ppcollision = function(t) return t._self.ppcollision end,  --b
-	ppchanged = function(t) return t._self.ppchanged end,  --b
-	xscale = function(t) return t._self.xscale end,
-	isactive = function(t) return t._self.isactive end,  --readonly
-	layer = function(t) return t._self.layer end,
-	isPersistent = function(t) return t._self.isPersistent end 
-}
-
-local special_get_sprites = {
-	spritename = function(t) return t._self.spritename end, 
-	x = function(t) return t._self.x end, 
-	y = function(t) return t._self.y end, 
-	absx = function(t) return t._self.absx end, 
-	absy = function(t) return t._self.absy end, 
-	xscale = function(t) return t._self.xscale end, 
-	yscale = function(t) return t._self.yscale end,
-	isactive = function(t) return t._self.isactive end,  --readonly
-	width = function(t) return t._self.width end,   --readonly 
-	height = function(t) return t._self.height end,  --readonly 
-	xpivot = function(t) return t._self.xpivot end, 
-	ypivot = function(t) return t._self.ypivot end, 
-	animcomplete = function(t) return t._self.animcomplete end,  --readonly 
-	currentframe = function(t) return t._self.currentframe end, 
-	currenttime = function(t) return t._self.currenttime end, 
-	animationspeed = function(t) return t._self.animationspeed end, 
-	animationpaused = function(t) return t._self.animationpaused end, 
-	loopmode = function(t) return t._self.loopmode end, 
-	color = function(t) return t._self.color end, 
-	color32 = function(t) return t._self.color32 end, 
-	alpha = function(t) return t._self.alpha end,  
-	alpha32 = function(t) return t._self.alpha32 end,  
-	rotation = function(t) return t._self.rotation end,  
-	layer = function(t) return t._self.layer end
-}
-
-function setupSpecial(input)
-	--shared
-	rawset(input, "Move", input._self.Move)   --static, b, s
-	rawset(input, "MoveTo", input._self.MoveTo)  --static, b, s
-	rawset(input, "MoveToAbs", input._self.MoveToAbs)  --static, b, s
-	rawset(input, "SendToTop", input._self.SendToTop)  --static
-	rawset(input, "SendToBottom", input._self.SendToBottom)  --static
-	rawset(input, "Remove", input._self.Remove)  --static 
-	rawset(input, "SetVar", input._self.SetVar)  --static
-	rawset(input, "GetVar", input._self.GetVar)  --static
-
-	--bullets only
-	if tostring(input._self) == "ProjectileController" then
-		for k,v in pairs(special_set_bullets) do
-			input._set[k] = v
-		end
-		for k,v in pairs(special_get_bullets) do
-			input._get[k] = v
-		end
-		rawset(input, "ResetCollisionSystem", input._self.ResetCollisionSystem)  --static, b
-		rawset(input, "isColliding", input._self.isColliding)  --static, b
-		rawset(input, "isPersistent", input._self.isPersistent)  --b
-		rawset(input, "sprite", input._self.sprite)
-		return
-	end
-
-	--sprites only
-	for k,v in pairs(special_set_sprites) do
-		input._set[k] = v
-	end
-	for k,v in pairs(special_get_sprites) do
-		input._get[k] = v
-	end
-	rawset(input, "Set", input._self.Set)  --static 
-	rawset(input, "SetParent", input._self.SetParent)  --static 
-	rawset(input, "Mask", input._self.Mask)  --static 
-	rawset(input, "shader", input._self.shader)  
-	rawset(input, "SetPivot", input._self.SetPivot)  --static 
-	rawset(input, "SetAnchor", input._self.SetAnchor)  --static 
-	rawset(input, "Scale", input._self.Scale)  --static 
-	rawset(input, "SetAnimation", input._self.SetAnimation)  --static 
-	rawset(input, "StopAnimation", input._self.StopAnimation)  --static
-	rawset(input, "MoveBelow", input._self.MoveBelow)  --static
-	rawset(input, "Dust", input._self.Dust) 
 end
