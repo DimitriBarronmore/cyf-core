@@ -163,7 +163,8 @@ local function fake_require(filename, env)
 end
 
 local function newbullet(abs, env, list, ...)
-	local proj = (abs and CreateProjectileAbs) or CreateProjectile(...)
+	local proj = (abs and CreateProjectileAbs) or CreateProjectile
+	proj = proj(...)
 	proj.SetVar("wave_inheritance_script", env)
 	table.insert(list,proj)
 	return proj
@@ -224,7 +225,10 @@ local function createwave(wavename, realwave)
 		endwave(newwave, realwave, bulletlist)
 	end
 
-	newwave.OnHit = defaultonhit
+	newwave.OnHit = CreateEvent(defaultonhit)
+	newwave.Update = CreateEvent()
+
+
 	newwave.CreateProjectile = function(...)
 		return newbullet(false, newwave, bulletlist, ...)
 	end
@@ -232,7 +236,7 @@ local function createwave(wavename, realwave)
 		return newbullet(true, newwave, bulletlist, ...)
 	end
 	newwave.Arena = realwave["Arena"]
-	function newwave.EndingWave() end
+	newwave.EndingWave == function() end
 
 	return newwave
 end
