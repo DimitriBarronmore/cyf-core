@@ -165,6 +165,7 @@ function library.create_arena(self, x, y, w, h, r)
 	shell.isResizing = false
 	shell.isRotating = false
 	shell.isModifying = false
+	shell.isactive = true
 
 	local outer = CreateSprite("px", "fake_arenas")
 	local inner = CreateSprite("px", "fake_arenas")

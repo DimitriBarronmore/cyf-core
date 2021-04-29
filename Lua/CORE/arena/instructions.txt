@@ -50,7 +50,7 @@ The sprite components of an arena can be accessed through Arena.walls (the white
 
 The speed an arena animates at when altered non-instantly can be adjusted by setting the Arena.movementspeed variable. The default value is 1000. This may lead to unreliable behavior at high speeds.
 
-To get rid of an arena when you're done with it (such as at the end of a wave), use Arena.Remove(). Note that any operations on a previously removed arena will result in an error.
+To get rid of an arena when you're done with it (such as at the end of a wave), use Arena.Remove(). Note that any operations on a previously removed arena will result in an error. You can see whether an arena has been removed or not using Arena.isactive
 
 -----------------------
 The Player:
