@@ -2,12 +2,9 @@
 
 	CORE Overwrite -- A lightweight and modular userdata wrapper.
 	Inspired from a library by and written with minor help from Eir#8327
-	Designed for use in Create Your Frisk by https://github.com/DimitriBarronmore
-	
-	Copyright © 2020-2021 Dimitri Barronmore¸Some Rights Reserved
-	Released under a Creative Commons Attribution 4.0 International license.
-	https://creativecommons.org/licenses/by/4.0/
+	https://github.com/DimitriBarronmore/cyf-core-labs
 
+	© 2021 Dimitri Barronmore
 --]]
 
 

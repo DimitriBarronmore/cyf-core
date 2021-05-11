@@ -3,12 +3,12 @@
 	Integer Dictionaries -- A slightly cursed custom type. 
 	Allows for arbitrary key extraction like a set, but also stores ordered indexes.
 	I don't know who will ever need it, including myself, but I'm including it here regardless.
-
-	Released under a Creative Commons Attribution 4.0 International license.
-	https://creativecommons.org/licenses/by/4.0/
 	
 	If you see this, I need to rewrite this library from the ground-up.
 	Or at least document it better.
+
+	https://github.com/DimitriBarronmore/cyf-core-labs
+	© 2021 Dimitri Barronmore
 
 --]]
 

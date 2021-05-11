@@ -2,11 +2,9 @@
 	
 	CORE Events -- Listener-based events built off a doubly-linked list.
 	A cleaner version of the concept put forth in Monster Events. 
-	Designed for use in Create Your Frisk by https://github.com/DimitriBarronmore
+	https://github.com/DimitriBarronmore/cyf-core-labs
 
-	Copyright © 2020 Dimitri Barronmore, Some Rights Reserved
-	Released under a Creative Commons Attribution 4.0 International license.
-	https://creativecommons.org/licenses/by/4.0/
+	© 2021 Dimitri Barronmore
  --]]
 
 -- A convenience value for library makers.
