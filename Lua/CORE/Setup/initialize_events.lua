@@ -1,6 +1,3 @@
--- We pass in the createevent function from the init script
-local CreateEvent = ...
-
 -- Detect what script the file is currently being run in and initialize game events accordingly.
 
 local enc = SetButtonLayer

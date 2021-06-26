@@ -231,7 +231,7 @@ end
 -- This causes odd behavior in sprites, bullets, and the audio object
 -- All fresh references will end up going through Get/SetVar or Get/SetSoundDictionary
 
-local function WrapUserdata(usrdata)
+function WrapUserdata(usrdata)
 	if type(usrdata) ~= "userdata" then
 		error("tried to wrap object of type " .. type(usrdata),2)
 	end
@@ -272,5 +272,3 @@ local function WrapUserdata(usrdata)
 	setmetatable(new_object, userdata_mt)
 	return new_object
 end
-
-return WrapUserdata

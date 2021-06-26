@@ -195,7 +195,7 @@ end
 
 
 -- A nice unique key to break with.
-function events.break_event() end
+function break_event() end
 
 -- Iterates through every group of functions, calling each function with the given arguments.
 -- Will not execute a group with the value .is_disabled
@@ -238,7 +238,7 @@ end
 
 -- Here we finally create and return individual Event objects.
 
-function events.CreateEvent(func)
+function CreateEvent(func)
 	local temp_mt = getmetatable(func)
 	if func then
 		if not (type(func) == "function") then
@@ -278,5 +278,3 @@ function events.CreateEvent(func)
 
 	return Event
 end
-
-return events
