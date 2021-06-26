@@ -5,12 +5,7 @@
 	https://github.com/DimitriBarronmore/cyf-core-labs
 
 	© 2021 Dimitri Barronmore
- --]]
-
--- A convenience value for library makers.
--- You can use this to test whether this file has been loaded or not.
-CORE_Events = true 
-
+--]]
 
 --[[ Linked list functions. 
 	 This code was heavily referenced from a luapower library, alhough my version is significantly lazier.
@@ -22,6 +17,8 @@ CORE_Events = true
 	 Currently there's no way to remove an item from the list, or to traverse the list backwards. 
 	 If this comment still exists, I never felt the need to add one. Them's the brakes. 
 —-]]
+
+local events = {}
 
 local LList = {}
 
@@ -198,7 +195,7 @@ end
 
 
 -- A nice unique key to break with.
-function break_event() end
+function events.break_event() end
 
 -- Iterates through every group of functions, calling each function with the given arguments.
 -- Will not execute a group with the value .is_disabled
@@ -241,7 +238,7 @@ end
 
 -- Here we finally create and return individual Event objects.
 
-function CreateEvent(func)
+function events.CreateEvent(func)
 	local temp_mt = getmetatable(func)
 	if func then
 		if not (type(func) == "function") then
@@ -281,3 +278,5 @@ function CreateEvent(func)
 
 	return Event
 end
+
+return events

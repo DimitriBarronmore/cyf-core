@@ -8,11 +8,6 @@
 --]]
 
 
--- A convenience value for library makers.
--- You can use this to test whether this file has been loaded or not.
-CORE_Overwrite = true 
-
-
 -- Define a metatable to mimick the properties of userdata.
 local function err_compare(lhs, rhs)
 	error("attempt to compare " .. type(lhs) .. " with " .. type(rhs), 2)
@@ -236,7 +231,7 @@ end
 -- This causes odd behavior in sprites, bullets, and the audio object
 -- All fresh references will end up going through Get/SetVar or Get/SetSoundDictionary
 
-function WrapUserdata(usrdata)
+local function WrapUserdata(usrdata)
 	if type(usrdata) ~= "userdata" then
 		error("tried to wrap object of type " .. type(usrdata),2)
 	end
@@ -277,3 +272,5 @@ function WrapUserdata(usrdata)
 	setmetatable(new_object, userdata_mt)
 	return new_object
 end
+
+return WrapUserdata

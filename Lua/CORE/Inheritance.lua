@@ -8,14 +8,15 @@
 	© 2021 Dimitri Barronmore
  --]]
 
--- A convenience value for library makers.
--- You can use this to test whether this file has been loaded or not.
-CORE_Inheritance = true 
 
 -- If this value is true, EndWave() will behave as it normally does.
 -- If this value is false, EndWave() will end only the wave it is called in.
-end_waves_simultaneously = true
+if end_waves_simultaneously == nil then
+	end_waves_simultaneously = true
+end
 
+-- Module table.
+local inheritance = {}
 
 local sandbox = {}
 
@@ -99,13 +100,13 @@ local values_to_copy = {
 	"CreateProjectileAbs"
 } 
 
-function AddToSandbox(target)
+function inheritance.AddToSandbox(target)
 	if not table.findindex(values_to_copy, target) then
 		table.insert(values_to_copy, target)
 	end
 end
 
-function RemoveFromSandbox(target)
+function inheritance.RemoveFromSandbox(target)
 	res = table.findindex(values_to_copy, target)
 	if res then 
 		table.remove(values_to_copy,res)
@@ -136,17 +137,15 @@ EnemyDialogueEnding:CreateGroup("CORE_Post","last")
 EnemyDialogueEnding:Add(captureWaves,"CORE_Post", "captureWaves")
 
 
--- Unfortunately, this is necessary as load() is currently broken in CYF.
-local function loadfileCYF(filename, env, errlevel)
-	local errlevel = errlevel or 2
-	local env = env or _ENV
-
-	local status, res = pcall(Misc.OpenFile,filename)
-	if not status then error("file " .. filename .. " was not found",errlevel) end
-	
-	local lines = res.ReadLines()
-	local chunk = load(table.concat(lines,"\n"), filename, "t", env)
-	return chunk
+-- Excellent mod path/name finder snippet adapted shamelessly from here:
+-- https://github.com/AllyTally/meow-2/blob/main/Lua/Libraries/Overworld.lua
+-- Because the one at https://github.com/AllyTally/cyf-snippets literally doesn't work
+local modPath, modName
+do
+	output = Misc.OpenFile("","w").filePath
+    output = output:gsub("/", "\\")
+    modPath = output
+    modName = output:sub(0, output:find("\\[^\\]*$") - 1):sub(output:sub(0, output:find("\\[^\\]*$") - 1):find("\\[^\\]*$") + 1, output:len())
 end
 
 -- Partially remaking require for the sandbox to get around the global environment.
@@ -154,9 +153,18 @@ local function fake_require(filename, env)
 	if env.package.loaded[filename] then
 		return env.package.loaded[filename]
 	else
-		val = loadfileCYF("Lua/" .. filename .. ".lua", env,4)()
-		env.package.loaded[filename] = val or true
-		return val
+		local val
+		if Misc.FileExists("Lua/" .. filename .. ".lua") then
+			val = loadfile("Mods/" .. modName .. "/Lua/" .. filename .. ".lua", "t", env)
+		elseif Misc.FileExists("Lua/Libraries/" .. filename .. ".lua") then
+			val = loadfile("Mods/" .. modName .. "/Lua/Libraries/" .. filename .. ".lua", "t", env)
+		else
+			error("Mods/" .. modName .. "/Lua/" .. filename .. ".lua")
+			--error("module " .. filename .. " not found", 2)
+		end
+		local ret = val(filename)
+		env.package.loaded[filename] = ret or true
+		return ret
 	end
 end
 
@@ -179,7 +187,8 @@ local function redirect_onhit(bullet)
 		return break_event
 	end
 end
-OnHit:Add(redirect_onhit, "BeforeMethod", "redirect_onhit")
+OnHit:CreateGroup("CORE_Pre","first")
+OnHit:Add(redirect_onhit, "CORE_Pre", "redirect_onhit")
 
 local function endwave(wave, realwave, bullets)
 	wave.EndingWave()
@@ -193,7 +202,7 @@ local function endwave(wave, realwave, bullets)
 			realwave.Call('EndWave') -- if all false waves have ended, end the real one
 		end
 	else -- simultanious ending
-		realwave.Call('EndWave') 
+		realwave.Call('EndWave')
 	end
 end
 
@@ -210,12 +219,35 @@ local function createwave(wavename, realwave)
 	newwave.require = function (input)
 		return fake_require(input, newwave)
 	end
-	newwave.load = function(ld, source, mode, env)
+	--[[newwave.load = function(ld, source, mode, env, ...)
 		source = (type(ld) == "string" and ld) or "=(load)"
 		mode = mode or "bt"
 		env = env or newwave
-		local status, res = pcall(load, ld, source, mode, env)
+		local status, res = pcall(load, ld, source, mode, env, ...)
 		if not status then error(res, 2) end
+		return res
+	end
+
+	newwave.loadfile = function(source, mode, env, ...)
+		mode = mode or "bt"
+		env = env or newwave
+		local status, res = pcall(load, source, mode, env, ...)
+		if not status then error(res, 2) end
+		return res
+	end--]]
+
+	newwave.load = loadsafe
+	newwave.loadfile = loadfilesafe
+
+	newwave.dofile = function(filename, ...)
+		if Misc.FileExists("Lua/" .. filename) then
+			val = loadfile("Mods/" .. modName .. "/Lua/" .. filename, env)
+		elseif Misc.FileExists("Lua/Libraries/" .. filename) then
+			val = loadfile("Mods/" .. modName .. "/Lua/Libraries/" .. filename, env)
+		else
+			error("file " .. filename .. " not found")
+		end
+		res = val(...)
 		return res
 	end
 
@@ -234,7 +266,7 @@ local function createwave(wavename, realwave)
 		return newbullet(true, newwave, bulletlist, ...)
 	end
 	newwave.Arena = realwave["Arena"]
-	newwave.EndingWave == function() end
+	newwave.EndingWave = function() end
 
 	return newwave
 end
@@ -243,8 +275,11 @@ function core_loadWaves()
 	local realwave = Wave[1]
 	for i,v in ipairs(waves_to_load) do
 		local currentwave = createwave(v, realwave)
-		local err, res = pcall(loadfileCYF, 'Lua/Waves/' .. v .. '.lua', currentwave)
-		if not err then error("error in script encounter\n\nThe wave " .. v .. " doesn't exist.",3) end
+		if Misc.FileExists("Lua/Waves/" .. v .. ".lua") then
+			res = loadfile("Mods/" .. modName .. '/Lua/Waves/' .. v .. '.lua', "t", currentwave)
+		else
+			error("error in script encounter\n\nThe wave " .. v .. " doesn't exist.",3)
+		end
 		res()
 		table.insert(active_waves, currentwave)
 	end
