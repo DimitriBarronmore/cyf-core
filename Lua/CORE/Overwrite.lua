@@ -231,6 +231,12 @@ end
 -- This causes odd behavior in sprites, bullets, and the audio object
 -- All fresh references will end up going through Get/SetVar or Get/SetSoundDictionary
 
+function GetIsWrapped(udata)
+	res, err = pcall(function() return udata.userdata end)
+	--DEBUG(err)
+	return res
+end
+
 function WrapUserdata(usrdata)
 	if type(usrdata) ~= "userdata" then
 		error("tried to wrap object of type " .. type(usrdata),2)

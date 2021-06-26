@@ -50,9 +50,16 @@ local wave = EndWave
 
 if (not (mons or wave)) or enc then -- Encounter-only
 
-	-- these need to be updated somewhat
+	-- Inheritance
 	require ("CORE/Inheritance")
-	--require ("CORE/Setup/initialize_wave_sandbox")
+
+	-- events
+	AddToSandbox("CreateEvent")
+	AddToSandbox("break_event")
+
+	-- overwrite
+	AddToSandbox("WrapUserdata")
+	AddToSandbox("GetIsWrapped")
 
 end
 

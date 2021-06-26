@@ -15,10 +15,8 @@ if end_waves_simultaneously == nil then
 	end_waves_simultaneously = true
 end
 
--- Module table.
-local inheritance = {}
-
-local sandbox = {}
+-- Gotta declare this early for structure reasons
+local core_endallwaves
 
 local values_to_copy = {
 	"_VERSION",
@@ -100,13 +98,13 @@ local values_to_copy = {
 	"CreateProjectileAbs"
 } 
 
-function inheritance.AddToSandbox(target)
+function AddToSandbox(target)
 	if not table.findindex(values_to_copy, target) then
 		table.insert(values_to_copy, target)
 	end
 end
 
-function inheritance.RemoveFromSandbox(target)
+function RemoveFromSandbox(target)
 	res = table.findindex(values_to_copy, target)
 	if res then 
 		table.remove(values_to_copy,res)
@@ -126,12 +124,23 @@ local function createEnv(source)
 	return new_environment
 end
 
--- capture/redirect nextwaves
+local state_waves_loaded = 0
+-- 0 : not defending
+-- 1 : begin counting up to wave load
+-- 2 : load waves
+-- 3 : currently defending
+
+
+-- capture/redirect nextwaves and the wave timer
 local active_waves = {}
 local waves_to_load = {}
+local real_wavetimer
 local function captureWaves()
 	waves_to_load = nextwaves
-	nextwaves = {'wave_loader'}
+	nextwaves = { "blank_wave"}
+	real_wavetimer = wavetimer
+	wavetimer = math.huge
+	state_waves_loaded = 1
 end
 EnemyDialogueEnding:CreateGroup("CORE_Post","last")
 EnemyDialogueEnding:Add(captureWaves,"CORE_Post", "captureWaves")
@@ -190,6 +199,8 @@ end
 OnHit:CreateGroup("CORE_Pre","first")
 OnHit:Add(redirect_onhit, "CORE_Pre", "redirect_onhit")
 
+local STATE_ENDING = false
+
 local function endwave(wave, realwave, bullets)
 	wave.EndingWave()
 	table.remove(active_waves, table.findindex(active_waves,wave))
@@ -198,19 +209,30 @@ local function endwave(wave, realwave, bullets)
 		for i,v in ipairs(bullets) do -- clear local bullets
 			v.Remove() 
 		end
-		if #active_waves == 0 then
-			realwave.Call('EndWave') -- if all false waves have ended, end the real one
+		if #active_waves == 0 and (not STATE_ENDING) then
+			core_endallwaves() -- if all false waves have ended, end the real one
 		end
-	else -- simultanious ending
-		realwave.Call('EndWave')
+	elseif end_waves_simultaneously ~= false and (not STATE_ENDING) then -- simultanious ending
+		core_endallwaves()
 	end
 end
+
+local encounter_blacklist = setmetatable({}, {
+		__index = _ENV, 
+		__newindex = function(t,k,v) 
+			if k == "wavetimer" then
+				real_wavetimer = v
+			else
+				t[k] = v
+			end
+		end
+	} )
 
 local function createwave(wavename, realwave)
 	local newwave = createEnv()
 	local bulletlist = {}
 		-- alter specific values
-	newwave.Encounter = _ENV
+	newwave.Encounter = encounter_blacklist
 	newwave._G = newwave
 	newwave._ENV = newwave
 	newwave.package = {loaded = {}}
@@ -271,8 +293,13 @@ local function createwave(wavename, realwave)
 	return newwave
 end
 
-function core_loadWaves()
+local real_wave_table
+local function core_loadWaves()
+	STATE_ENDING = false
 	local realwave = Wave[1]
+	real_wave_table = Wave
+	Wave = {}
+
 	for i,v in ipairs(waves_to_load) do
 		local currentwave = createwave(v, realwave)
 		if Misc.FileExists("Lua/Waves/" .. v .. ".lua") then
@@ -282,23 +309,47 @@ function core_loadWaves()
 		end
 		res()
 		table.insert(active_waves, currentwave)
+		table.insert(Wave, currentwave)
 	end
 	waves_to_load = {}
 end
 
-function core_updateWaves()
-	for i,v in ipairs(active_waves) do
-		v.Update()
+
+local function core_updateWaves()
+	if state_waves_loaded == 0 then
+		return
+	elseif state_waves_loaded == 1 then
+		state_waves_loaded = 2
+		return
+	elseif state_waves_loaded == 2 then
+		core_loadWaves()
+		state_waves_loaded = 3
+	elseif state_waves_loaded == 3 then
+
+		if Time.wave > real_wavetimer then
+			core_endallwaves()
+			return
+		end
+
+		for i,v in ipairs(active_waves) do
+			v.Update()
+		end
 	end
 end
+
+Update:CreateGroup("INHERITANCE_WAVES","last")
+Update:Add(core_updateWaves,"INHERITANCE_WAVES", "update inheritance")
 
 function core_endallwaves( )
+	STATE_ENDING = true
 	for i,v in ipairs(active_waves) do
-		v.EndingWave()
+		--v.EndingWave()
 		v.EndWave()
 	end
+	Wave = real_wave_table
+	wavetimer = real_wavetimer
 	active_waves = {}
+	state_waves_loaded = 0
+
+	Wave[1].Call("EndWave")
 end
-
-
-return sandbox
