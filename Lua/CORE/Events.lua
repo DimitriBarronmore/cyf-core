@@ -152,6 +152,9 @@ function EventFunctions:Add(func, chosen_set, name)
 	--Add the function to the set.
 	self.dictionary[func] = {name, set}
 	table.insert(set.methods, func)
+
+	--return the function for minified syntax
+	return func
 end
 
 
@@ -165,11 +168,14 @@ function EventFunctions:Remove(func)
 	if not self.dictionary[func] then
 		error("The given function is not registered to the event.", 2)
 	end
-	--Remove the function, if it's previously been added.
+
+	table.insert(self._tokill, func)
+
+	--[[Remove the function, if it's previously been added.
 	set = self.dictionary[func][2]
 	local res = table.findindex(set.methods, func)
 	table.remove(set.methods, res)
-	self.dictionary[func] = nil
+	self.dictionary[func] = nil]]
 end
 
 -- Prevent a group of functions from running with the event.
@@ -194,24 +200,42 @@ function EventFunctions:EnableGroup(chosen_set)
 end
 
 
+local function remove_finished(event)
+	for i = #event._tokill, 1, -1 do
+		local func = event._tokill[i]
+
+		--Remove the function, if it's previously been added.
+		set = event.dictionary[func][2]
+		local res = table.findindex(set.methods, func)
+		table.remove(set.methods, res)
+		event.dictionary[func] = nil
+		event._tokill[i] = nil
+	end
+end
+
 -- A nice unique key to break with.
 function break_event() end
+
 
 -- Iterates through every group of functions, calling each function with the given arguments.
 -- Will not execute a group with the value .is_disabled
 -- Order of execution within a group is undefined
 function EventFunctions:Call(...)
+	remove_finished(self)
+
 	local end_result
 	local temp_result
 	local broken = false
 	for set in self.list() do
 		if not set.is_disabled then
 			for i,func in ipairs(set.methods) do
-				temp_result, broken = func(...)
-				if (temp_result == break_event) or (broken == break_event) then
-					broken = true
-					if broken == break_event then end_result = temp_result end
-					goto continue
+				if not table.findindex(self._tokill, func) then
+					temp_result, broken = func(...)
+					if (temp_result == break_event) or (broken == break_event) then
+						broken = true
+						if broken == break_event then end_result = temp_result end
+						goto continue
+					end
 				end
 			end
 			if set == self.list.Method then
@@ -220,6 +244,7 @@ function EventFunctions:Call(...)
 		end
 	end
 	::continue::
+	remove_finished(self)
 	return end_result, broken
 end
 
@@ -235,6 +260,7 @@ function EventFunctions:Debug()
 	end
 	return final
 end
+
 
 -- Here we finally create and return individual Event objects.
 
@@ -259,6 +285,7 @@ function CreateEvent(func)
 						} )
 	--Initialize the default series of sets.
 	Event.dictionary = {}
+	Event._tokill = {}
 	Event.list = setmetatable({}, {__index = LList, 
 								   __call = function(tab)
 								      return tab:items()
