@@ -36,7 +36,6 @@ require(current_folder .. "Setup/initialize_events")
 --local initevents = loadfile("Mods/" .. modName .. "/Lua/" .. current_folder .. "Setup/initialize_events.lua", "t", _ENV)
 --initevents(events.CreateEvent)
 
-
 -- Overwrite
 
 require(current_folder .. "Overwrite")
@@ -50,6 +49,8 @@ local wave = EndWave
 
 if (not (mons or wave)) or enc then -- Encounter-only
 
+	Update:CreateGroup("ADDITIONAL_UPDATES","last")
+
 	-- Inheritance
 	require ("CORE/Inheritance")
 
@@ -60,6 +61,22 @@ if (not (mons or wave)) or enc then -- Encounter-only
 	-- overwrite
 	AddToSandbox("WrapUserdata")
 	AddToSandbox("GetIsWrapped")
+
+	EncounterStarting:CreateGroup("Inheritance_Setup", "first")
+	EncounterStarting:Add(function() 
+		require "CORE/States" 
+	end, "Inheritance_Setup", "import states")
+
+	local function update_monsters()
+		for _, v in pairs(enemies) do
+			v.Call("Update")
+		end
+	end
+
+	EncounterStarting:Add(function()
+		Update:Add(update_monsters, "ADDITIONAL_UPDATES", "update() monsters")
+	end, "Inheritance_Setup", "setup monster update")
+
 
 end
 

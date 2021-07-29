@@ -142,8 +142,8 @@ local function captureWaves()
 	wavetimer = math.huge
 	state_waves_loaded = 1
 end
-EnemyDialogueEnding:CreateGroup("CORE_Post","last")
-EnemyDialogueEnding:Add(captureWaves,"CORE_Post", "captureWaves")
+EnemyDialogueEnding:CreateGroup("INHERITANCE_Post","last")
+EnemyDialogueEnding:Add(captureWaves,"INHERITANCE_Post", "captureWaves")
 
 
 -- Excellent mod path/name finder snippet adapted shamelessly from here:
@@ -196,8 +196,8 @@ local function redirect_onhit(bullet)
 		return break_event
 	end
 end
-OnHit:CreateGroup("CORE_Pre","first")
-OnHit:Add(redirect_onhit, "CORE_Pre", "redirect_onhit")
+OnHit:CreateGroup("INHERITANCE_Pre","first")
+OnHit:Add(redirect_onhit, "INHERITANCE_Pre", "redirect_onhit")
 
 local STATE_ENDING = false
 
@@ -337,8 +337,8 @@ local function core_updateWaves()
 	end
 end
 
-Update:CreateGroup("INHERITANCE_WAVES","last")
-Update:Add(core_updateWaves,"INHERITANCE_WAVES", "update inheritance")
+--Update:CreateGroup("INHERITANCE_WAVES","last")
+Update:Add(core_updateWaves,"ADDITIONAL_UPDATES", "update inheritance")
 
 function core_endallwaves( )
 	STATE_ENDING = true
