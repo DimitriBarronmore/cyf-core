@@ -43,8 +43,8 @@ end
 
 for name in pairs(valid_game_states) do
 	st = CreateState(name, name)
-	st.onEnter = function() DEBUG("ENTERING " .. name) end
-	st.onExit = function() DEBUG("EXITING " .. name) end
+	--st.onEnter = function() DEBUG("ENTERING " .. name) end
+	--st.onExit = function() DEBUG("EXITING " .. name) end
 end
 
 function GetStateObject(name)
@@ -147,6 +147,3 @@ end
 
 Update:CreateGroup("STATES_UPDATE", "last")
 Update:Add(update_current_state, "STATES_UPDATE", "update() current state")
-
-GetStateObject("ACTIONSELECT").update.method = function() DEBUG("nice") end
-GetStateObject("DEFENDING").update.method = function() DEBUG("sick dodge") end
