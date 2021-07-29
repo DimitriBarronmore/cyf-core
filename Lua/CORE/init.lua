@@ -54,18 +54,27 @@ if (not (mons or wave)) or enc then -- Encounter-only
 	-- Inheritance
 	require ("CORE/Inheritance")
 
-	-- events
+	-- Events
 	AddToSandbox("CreateEvent")
 	AddToSandbox("break_event")
 
-	-- overwrite
+	-- Overwrite
 	AddToSandbox("WrapUserdata")
 	AddToSandbox("GetIsWrapped")
 
-	EncounterStarting:CreateGroup("Inheritance_Setup", "first")
+	-- States
+	EncounterStarting:CreateGroup("CORE_Setup", "first")
 	EncounterStarting:Add(function() 
 		require "CORE/States" 
-	end, "Inheritance_Setup", "import states")
+	end, "CORE_Setup", "import states")
+
+
+	-- Monster Script Improvements
+	EncounterStarting:Add(function()
+		for _, v in pairs(enemies) do
+			v.Call("EncounterStarting")
+		end
+	end, "CORE_Setup", "Monster EncounterStarting")
 
 	local function update_monsters()
 		for _, v in pairs(enemies) do
@@ -75,7 +84,7 @@ if (not (mons or wave)) or enc then -- Encounter-only
 
 	EncounterStarting:Add(function()
 		Update:Add(update_monsters, "ADDITIONAL_UPDATES", "update() monsters")
-	end, "Inheritance_Setup", "setup monster update")
+	end, "CORE_Setup", "setup monster update")
 
 
 end
