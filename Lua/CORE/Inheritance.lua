@@ -76,7 +76,7 @@ local values_to_copy = {
 	"SetAction",
 	"SetPPCollision",
 	"AllowPlayerDef",
-	"CreateText",
+	--"CreateText",
 	"GetCurrentState",
 	"BattleDialog",
 	"BattleDialogue",
@@ -94,8 +94,8 @@ local values_to_copy = {
 	"_getv",
 	--"EndWave", --replace this
 	"State",
-	"CreateProjectile",
-	"CreateProjectileAbs"
+	--"CreateProjectile",
+	--"CreateProjectileAbs"
 } 
 
 function AddToSandbox(target)
@@ -199,6 +199,26 @@ end
 OnHit:CreateGroup("INHERITANCE_Pre","first")
 OnHit:Add(redirect_onhit, "INHERITANCE_Pre", "redirect_onhit")
 
+local text_directory = {}
+local function wave_createtext(wave, ...)
+	local _, txt = pcall(CreateText, ...)
+	if _ == false then error(txt, 2) end
+	text_directory[txt] = wave
+	return txt
+end
+
+local function redirect_textadvance(text, final)
+	if text_directory[text]then
+		text_directory[text].OnTextAdvance(text, final)
+		if final then text_directory[text] = nil end
+		return break_event
+	end
+end
+OnTextAdvance:CreateGroup("INHERITANCE_Pre","first")
+OnTextAdvance:Add(redirect_textadvance,
+	 "INHERITANCE_Pre", "redirect_textadvance")
+
+
 local STATE_ENDING = false
 
 local function endwave(wave, realwave, bullets)
@@ -279,7 +299,11 @@ local function createwave(wavename, realwave)
 
 	newwave.OnHit = CreateEvent(defaultonhit)
 	newwave.Update = CreateEvent()
+	newwave.OnTextAdvance = CreateEvent()
 
+	newwave.CreateText = function(...) 
+		return wave_createtext(newwave, ...)
+	end
 
 	newwave.CreateProjectile = function(...)
 		return newbullet(false, newwave, bulletlist, ...)
@@ -288,7 +312,7 @@ local function createwave(wavename, realwave)
 		return newbullet(true, newwave, bulletlist, ...)
 	end
 	newwave.Arena = realwave["Arena"]
-	newwave.EndingWave = function() end
+	newwave.EndingWave = CreateEvent()
 
 	return newwave
 end
