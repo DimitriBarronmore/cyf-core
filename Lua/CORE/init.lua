@@ -33,8 +33,6 @@ require(current_folder .. "Events")
 
 -- Initialize events in the current environment
 require(current_folder .. "Setup/initialize_events")
---local initevents = loadfile("Mods/" .. modName .. "/Lua/" .. current_folder .. "Setup/initialize_events.lua", "t", _ENV)
---initevents(events.CreateEvent)
 
 -- Overwrite
 
