@@ -26,6 +26,8 @@ if (not (mons or wave)) or enc then -- Encounter Script Events
 
 elseif mons then -- Monster Script Events
 
+	EncounterStarting = CreateEvent()
+
 	HandleAttack = CreateEvent()
 
 	OnDeath = CreateEvent(function() Kill() end)
@@ -44,8 +46,11 @@ elseif wave then -- Wave Script Events
     
 end
 
+-- All-Script Events
+
 Update = CreateEvent()
 
 OnHit = CreateEvent(function() Player.Hurt(3) end )
 
 OnTextAdvance = CreateEvent()
+
