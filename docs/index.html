@@ -13389,7 +13389,7 @@ exports.Completion = Completion;
 <div bag="default" revision="1" title="$:/status/UserName">
 <pre></pre>
 </div>
-<div list="[[Main Page]]" title="$:/StoryList">
+<div created="20210805053318171" list="[[Main Page]] [[CORE Inheritance]]" modified="20210805053318171" title="$:/StoryList">
 <pre></pre>
 </div>
 <div bag="default" created="20201108165852924" list="$:/core/ui/Buttons/fold-bar $:/core/ui/Buttons/more-tiddler-actions $:/core/ui/Buttons/fold-others $:/core/ui/Buttons/fold $:/core/ui/Buttons/info $:/core/ui/Buttons/new-here $:/core/ui/Buttons/new-journal-here $:/core/ui/Buttons/clone $:/core/ui/Buttons/export-tiddler $:/core/ui/Buttons/permalink $:/core/ui/Buttons/edit $:/core/ui/Buttons/delete $:/core/ui/Buttons/permaview $:/core/ui/Buttons/open-window $:/core/ui/Buttons/close-others $:/core/ui/Buttons/close" modified="20210709204639496" revision="5" title="$:/tags/ViewToolbar">
@@ -13616,8 +13616,10 @@ It is used heavily in other parts of CORE, such as to set up additional Update()
 
 </pre>
 </div>
-<div created="20210305054814989" list="end_waves_simultaneously AddToSandbox() RemoveFromSandbox() [[(Inheritance) Usage Notes]]" list-after="CORE Overwrite" modified="20210805042812465" tags="[[Table Of Contents]]" title="CORE Inheritance">
+<div created="20210305054814989" list="end_waves_simultaneously AddToSandbox() RemoveFromSandbox() [[(Inheritance) Usage Notes]]" list-after="CORE Overwrite" modified="20210805053649576" tags="[[Table Of Contents]]" title="CORE Inheritance">
 <pre>&quot;&quot;&quot;A custom wave loader which enables variables to be passed directly into wave files with very few necessary changes. Doesn't add much functionality by itself, but makes some inter-script wizardry a bit easier.
+
+Using this module, the Encounter script can be accessed within wave files as a normal table without going through GetVar, SetVar and Call, and libraries loaded in the encounter script can be used directly in wave files as well.
 
 This module only loads in the Encounter script.&quot;&quot;&quot;
 
