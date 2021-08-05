@@ -1,4 +1,13 @@
-Originally a rewrite of my Monster Events library which branched out into further ideas, CORE is a small collection of libraries intended to make creating and using libraries in CYF mods easier. As of the time of writing, the main planned features are a system for creating events and registering functions to run before and after them, a more lightweight and simple to use Userdata wrapper, a CYK-style sandbox for waves which allows for common libraries to be loaded directly from the encounter and scripts to interact with each other without the use of clunky .Call() workarounds, and a reworked state system with individual gameloops dependent on the current state of the encounter and the ability to define your own states based off PAUSE and NONE.
+# CORE
+Originally a rewrite of my Monster Events library which branched out into further ideas, CORE is a small collection of libraries intended to make creating and using libraries in CYF mods easier.
 
-True Lab is a collection of smaller, more experimental libraries built off CORE as both a series of examples and a way of collecting and updating some of my older concepts. Hopefully someone might find them useful to demonstrate why I believe CORE is useful for creating more seamless libraries or for use in future mods.
+CORE includes a system for listener-based events, a lightweight userdata wrapper, an alternate wave loader which allows for more communication between waves and the encounter script, and a reworked custom state system which allows you to define your own states, alongside a handful of smaller tweaks to Lua modules and CYF's behavior.
 
+### Does this work with ____ out of the box?
+I have no idea. Give it a try and find out!
+
+### Are you going to add more features later?
+Probably not; I intend to move on to other projects, but I may fix important bugs if any are brought to my attention.
+
+### How can I get help if I don't understand how to use this?
+Check the documentation. I've tried to make it as concise and understandable as possible. 
