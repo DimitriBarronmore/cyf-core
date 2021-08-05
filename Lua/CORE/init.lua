@@ -1,14 +1,11 @@
 --[[
 	
 	This file automatically initializes all major CORE libraries.
-	Feel free to add and remove stuff as well, 
-	but remember that certain libraries depend on the functionality of others.
+	Feel free to add and remove stuff if you must, 
+	but remember that most modules depend on others to work.
 
 --]]
 
--- A convenience flag to demonstrate that CORE is loaded.
-CORE_LOADED = true
-CORE_VERSION = "prerelease"
 
 local current_folder = (...):gsub('%init$', '')
 
@@ -66,7 +63,6 @@ if (not (mons or wave)) or enc then -- Encounter-only
 		require "CORE/States" 
 	end, "CORE_Setup", "import states")
 
-
 	-- Monster Script Improvements
 	EncounterStarting:Add(function()
 		for _, v in pairs(enemies) do
@@ -86,9 +82,3 @@ if (not (mons or wave)) or enc then -- Encounter-only
 
 
 end
-
--- smaller libraries
---require "CORE/Types/ordered_dict"
-
-
-return core

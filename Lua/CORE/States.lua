@@ -34,9 +34,11 @@ CreateState = function( name, state )
 	newstate.onEnter = CreateEvent( )
 	newstate.onExit = CreateEvent( )
 	newstate._state = state
+	newstate.__type = "state"
 
 	-- register in list
 	states_list[ name:upper() ] = newstate
+	setmetatable(newstate, newstate)
 
 	return newstate
 end

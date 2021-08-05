@@ -1,3 +1,0 @@
-
-CORE is intended to be akin to a new standard library. Despite common Lua practice, very few things in CORE are namespaced in tables. Variable and function names are decisive and must be worked around by the user.
-In this way, CORE can be thought of as emulating a series of optional updates to CYF, or as an engine overhaul like CYK. While files should be relatively modular, each should itself be considered a fundamental change.

@@ -230,10 +230,10 @@ function EventFunctions:Call(...)
 		if not set.is_disabled then
 			for i,func in ipairs(set.methods) do
 				if not table.findindex(self._tokill, func) then
-					temp_result, broken = func(...)
-					if (temp_result == break_event) or (broken == break_event) then
+					temp_result, temp_result_2 = func(...)
+					if (temp_result == break_event) then
 						broken = true
-						if broken == break_event then end_result = temp_result end
+						end_result = temp_result_2
 						goto continue
 					end
 				end
