@@ -109,6 +109,8 @@ function State( nextstate )
 
 	::ENTER::
 
+	last_last = false
+
 	--DEBUG("enter " .. nextstate)
 	next.onEnter( current_state )
 
@@ -132,20 +134,25 @@ function State( nextstate )
 
 end
 
-function EnteringState(new, old)
+local function new_entering_state(new, old)
 	local natural = (nested > 0 and "unnatural") or "natural"
 	--DEBUG(nested)
 
 	--DEBUG(natural .. " STATE CHANGE ".. old .. " > " .. new)
 	if natural == "natural" then 
 		State(new)
+	else
+		return break_event
 	end
 
 end
+
+EnteringState:CreateGroup("CORE_handle_changes", "first")
+EnteringState:Add(new_entering_state, "CORE_handle_changes", "call EnteringState() on natural changes")
 
 local function update_current_state()
 	states_list[current_state].update()
 end
 
-Update:CreateGroup("STATES_UPDATE", "last")
-Update:Add(update_current_state, "STATES_UPDATE", "update() current state")
+-- Update:CreateGroup("STATES_UPDATE", "last")
+Update:Add(update_current_state, "ADDITIONAL_UPDATES", "update() current state")
