@@ -237,16 +237,38 @@ local function endwave(wave, realwave, bullets)
 	end
 end
 
-local encounter_blacklist = setmetatable({}, {
-		__index = _ENV, 
-		__newindex = function(t,k,v) 
-			if k == "wavetimer" then
-				real_wavetimer = v
-			else
-				t[k] = v
-			end
+local encounter_blacklist = {}
+
+encounter_blacklist.GetVar = function(name)
+	return encounter_blacklist[name]
+end
+
+encounter_blacklist.SetVar = function(name, value)
+	encounter_blacklist[name] = value
+end
+
+encounter_blacklist.Call = function(name, arg)
+	if type(_ENV[name]) ~= "function" then
+		error("attempt to call a non-function", 2)
+	end
+	if type(arg) == "table" then
+		st, err = pcall(_ENV[name], table.unpack(arg))
+		if st == false then error(err, 2) end
+	else
+		st, err = pcall(_ENV[name], arg)
+		if st == false then error(err, 2) end
+	end
+end
+
+setmetatable(encounter_blacklist, {
+	__index = _ENV, 
+	__newindex = function(t,k,v) 
+		if k == "wavetimer" then
+			real_wavetimer = v
+		else
+			t[k] = v
 		end
-	} )
+	end})
 
 
 local function createwave(wavename, realwave)
@@ -274,7 +296,6 @@ local function createwave(wavename, realwave)
 	newwave._ENV = newwave
 	newwave.package = {loaded = {}}
 	newwave.wavename = wavename
-
 
 	newwave.require = function (input)
 		return fake_require(input, safety_shell)
