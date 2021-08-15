@@ -1,5 +1,5 @@
 -- A basic encounter script skeleton you can copy and modify for your own creations.
-require "CORE/init"
+_ENV = require "CORE/init"
 -- Pre-Wrapping setup variables
 autowrapbullets = false
 autowrapsprites = false
@@ -24,27 +24,27 @@ enemypositions = {
 -- A custom list with attacks to choose from. Actual selection happens in EnemyDialogueEnding(). Put here in case you want to use it.
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
-function EncounterStarting.method()
+function EncounterStarting()
     -- If you want to change the game state immediately, this is the place.
 end
 
-function EnemyDialogueStarting.method()
+function EnemyDialogueStarting()
     -- Good location for setting monster dialogue depending on how the battle is going.
 end
 
-function EnemyDialogueEnding.method()
+function EnemyDialogueEnding()
     -- Good location to fill the 'nextwaves' table with the attacks you want to have simultaneously.
     nextwaves = { possible_attacks[math.random(#possible_attacks)] }
 end
 
-function DefenseEnding.method() --This built-in function fires after the defense round ends.
+function DefenseEnding() --This built-in function fires after the defense round ends.
     encountertext = RandomEncounterText() --This built-in function gets a random encounter text from a random enemy.
 end
 
-function HandleSpare.method()
+function HandleSpare()
     State("ENEMYDIALOGUE")
 end
 
-function HandleItem.method(ItemID)
+function HandleItem(ItemID)
     BattleDialog({"Selected item " .. ItemID .. "."})
 end

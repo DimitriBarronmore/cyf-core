@@ -1,4 +1,4 @@
-require "CORE/init"
+_ENV = require "CORE/init"
 -- Pre-Wrapping setup variables
 autowrapbullets = false
 autowrapsprites = false
@@ -20,16 +20,16 @@ dialogbubble = "right" -- See documentation for what bubbles you have available.
 canspare = false
 cancheck = true
 
-function EncounterStarting.method()
+function EncounterStarting()
     -- Happens before EncounterStarting in the Encounter script.
 end
 
-function Update.method()
+function Update()
     -- Runs once each frame after the Encounter update. 
 end
 
 -- Happens after the slash animation but before 
-function HandleAttack.method(attackstatus)
+function HandleAttack(attackstatus)
     if attackstatus == -1 then
         -- player pressed fight but didn't press Z afterwards
     else
@@ -38,7 +38,7 @@ function HandleAttack.method(attackstatus)
 end
  
 -- This handles the commands; all-caps versions of the commands list you have above.
-function HandleCustomCommand.method(command)
+function HandleCustomCommand(command)
     if command == "ACT 1" then
         currentdialogue = {"Selected\nAct 1."}
     elseif command == "ACT 2" then

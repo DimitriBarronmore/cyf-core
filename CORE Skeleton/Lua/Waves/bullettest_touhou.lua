@@ -4,7 +4,7 @@ bullets = {}
 yOffset = 180
 mult = 0.5
 
-function Update.method()
+function Update()
     spawntimer = spawntimer + 1
     if(spawntimer % 30 == 0) then
         local numbullets = 10

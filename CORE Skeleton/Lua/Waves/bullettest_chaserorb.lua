@@ -3,7 +3,7 @@ chasingbullet = CreateProjectile('bullet', Arena.width/2, Arena.height/2)
 chasingbullet.SetVar('xspeed', 0)
 chasingbullet.SetVar('yspeed', 0)
 
-function Update.method()
+function Update()
     local xdifference = Player.x - chasingbullet.x
     local ydifference = Player.y - chasingbullet.y
     local xspeed = chasingbullet.GetVar('xspeed') / 2 + xdifference / 100

@@ -168,8 +168,8 @@ local function fake_require(filename, env)
 		elseif Misc.FileExists("Lua/Libraries/" .. filename .. ".lua") then
 			val = loadfile("Mods/" .. modName .. "/Lua/Libraries/" .. filename .. ".lua", "t", env)
 		else
-			error("Mods/" .. modName .. "/Lua/" .. filename .. ".lua")
-			--error("module " .. filename .. " not found", 2)
+			-- error("Mods/" .. modName .. "/Lua/" .. filename .. ".lua")
+			error("module " .. filename .. " not found", 2)
 		end
 		local ret = val(filename)
 		env.package.loaded[filename] = ret or true
@@ -237,20 +237,59 @@ local function endwave(wave, realwave, bullets)
 	end
 end
 
-local encounter_blacklist = setmetatable({}, {
-		__index = _ENV, 
-		__newindex = function(t,k,v) 
-			if k == "wavetimer" then
-				real_wavetimer = v
-			else
-				t[k] = v
-			end
+local encounter_blacklist = {}
+
+encounter_blacklist.GetVar = function(name)
+	return encounter_blacklist[name]
+end
+
+encounter_blacklist.SetVar = function(name, value)
+	encounter_blacklist[name] = value
+end
+
+encounter_blacklist.Call = function(name, arg)
+	if type(_ENV[name]) ~= "function" then
+		error("attempt to call a non-function", 2)
+	end
+	if type(arg) == "table" then
+		st, err = pcall(_ENV[name], table.unpack(arg))
+		if st == false then error(err, 2) end
+	else
+		st, err = pcall(_ENV[name], arg)
+		if st == false then error(err, 2) end
+	end
+end
+
+setmetatable(encounter_blacklist, {
+	__index = _ENV, 
+	__newindex = function(t,k,v) 
+		if k == "wavetimer" then
+			real_wavetimer = v
+		else
+			t[k] = v
 		end
-	} )
+	end})
+
 
 local function createwave(wavename, realwave)
 	local newwave = createEnv()
 	local bulletlist = {}
+
+	local to_protect = {Update = true,
+		OnHit = true,
+		OnTextAdvance = true, 
+		EndingWave = true}
+		
+	local safety_shell = setmetatable({}, {
+		__index = newwave,
+		__newindex = function(t,k,v)
+			if to_protect[k] then
+				newwave[k].method = v
+			else
+				newwave[k] = v
+			end
+		end})
+
 		-- alter specific values
 	newwave.Encounter = encounter_blacklist
 	newwave._G = newwave
@@ -259,7 +298,7 @@ local function createwave(wavename, realwave)
 	newwave.wavename = wavename
 
 	newwave.require = function (input)
-		return fake_require(input, newwave)
+		return fake_require(input, safety_shell)
 	end
 	--[[newwave.load = function(ld, source, mode, env, ...)
 		source = (type(ld) == "string" and ld) or "=(load)"
@@ -283,9 +322,9 @@ local function createwave(wavename, realwave)
 
 	newwave.dofile = function(filename, ...)
 		if Misc.FileExists("Lua/" .. filename) then
-			val = loadfile("Mods/" .. modName .. "/Lua/" .. filename, env)
+			val = loadfile("Mods/" .. modName .. "/Lua/" .. filename, safety_shell)
 		elseif Misc.FileExists("Lua/Libraries/" .. filename) then
-			val = loadfile("Mods/" .. modName .. "/Lua/Libraries/" .. filename, env)
+			val = loadfile("Mods/" .. modName .. "/Lua/Libraries/" .. filename, safety_shell)
 		else
 			error("file " .. filename .. " not found")
 		end
@@ -294,7 +333,7 @@ local function createwave(wavename, realwave)
 	end
 
 	newwave.EndWave = function()
-		endwave(newwave, realwave, bulletlist)
+		endwave(safety_shell, realwave, bulletlist)
 	end
 
 	newwave.OnHit = CreateEvent(defaultonhit)
@@ -302,19 +341,21 @@ local function createwave(wavename, realwave)
 	newwave.OnTextAdvance = CreateEvent()
 
 	newwave.CreateText = function(...) 
-		return wave_createtext(newwave, ...)
+		return wave_createtext(safety_shell, ...)
 	end
 
 	newwave.CreateProjectile = function(...)
-		return newbullet(false, newwave, bulletlist, ...)
+		return newbullet(false, safety_shell, bulletlist, ...)
 	end
 	function newwave.CreateProjectileAbs(...)
-		return newbullet(true, newwave, bulletlist, ...)
+		return newbullet(true, safety_shell, bulletlist, ...)
 	end
 	newwave.Arena = realwave["Arena"]
 	newwave.EndingWave = CreateEvent()
 
-	return newwave
+	return safety_shell
+
+	-- return newwave
 end
 
 local real_wave_table

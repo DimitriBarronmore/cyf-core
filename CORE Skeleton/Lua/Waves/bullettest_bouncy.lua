@@ -2,7 +2,7 @@
 spawntimer = 0
 bullets = {}
 
-function Update.method()
+function Update()
     spawntimer = spawntimer + 1
     if spawntimer%30 == 0 then
         local posx = 30 - math.random(60)
