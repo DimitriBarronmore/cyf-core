@@ -47,7 +47,7 @@ if (not (mons or wave)) or enc then -- Encounter-only
 	Update:CreateGroup("ADDITIONAL_UPDATES","last")
 
 	-- Inheritance
-	WavesStarting = CreateEvent()
+	DefenseStarting = CreateEvent()
 	require ("CORE/Inheritance")
 
 	-- Events
@@ -117,6 +117,22 @@ setmetatable(safe_env, {
 		else
 			_ENV[k] = v
 		end
+	end,
+	__pairs = function(t)
+			local function iter(t, k)
+				local v
+				k,v = next(t, k)
+				if v ~= nil then return k,v end
+			end
+			return iter, _ENV, nil
+		end,
+	__ipairs = function(t)
+		local function iter(t, i)
+			i = i + 1
+			local v = t[i]
+			if v ~= nil then return i,v end
+		end
+		return iter, _ENV, 0
 	end })
 
 return safe_env

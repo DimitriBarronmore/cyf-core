@@ -268,7 +268,27 @@ setmetatable(encounter_blacklist, {
 		else
 			t[k] = v
 		end
-	end})
+	end,
+	__pairs = function(t)
+			local function iter(t, k)
+				local v
+				k,v = next(t, k)
+				if k == "wavetimer" then
+					return k, real_wavetimer
+				end
+				if v ~= nil then
+				 return k,v end
+			end
+			return iter, _ENV, nil
+		end,
+		__ipairs = function(t)
+			local function iter(t, i)
+				i = i + 1
+				local v = t[i]
+				if v ~= nil then return i,v end
+			end
+			return iter, _ENV, 0
+		end})
 
 
 local function createwave(wavename, realwave)
@@ -288,6 +308,22 @@ local function createwave(wavename, realwave)
 			else
 				newwave[k] = v
 			end
+		end,
+		__pairs = function(t)
+			local function iter(t, k)
+				local v
+				k,v = next(t, k)
+				if v ~= nil then return k,v end
+			end
+			return iter, newwave, nil
+		end,
+		__ipairs = function(t)
+			local function iter(t, i)
+				i = i + 1
+				local v = t[i]
+				if v ~= nil then return i,v end
+			end
+			return iter, newwave, 0
 		end})
 
 		-- alter specific values
