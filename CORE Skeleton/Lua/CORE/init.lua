@@ -47,6 +47,7 @@ if (not (mons or wave)) or enc then -- Encounter-only
 	Update:CreateGroup("ADDITIONAL_UPDATES","last")
 
 	-- Inheritance
+	WavesStarting = CreateEvent()
 	require ("CORE/Inheritance")
 
 	-- Events
@@ -100,10 +101,12 @@ local to_protect = {
 	HandleAttack = true,
 	OnDeath = true,
 	OnSpare = true,
+	OnTextAdvance = true,
 	BeforeDamageCalculation = true,
 	BeforeDamageValues = true,
 	HandleCustomCommand = true,
-	EndingWave = true
+	EndingWave = true,
+	DefenseStarting = true
 }
 
 setmetatable(safe_env, {

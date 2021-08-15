@@ -140,7 +140,7 @@ local function captureWaves()
 	nextwaves = { "blank_wave"}
 	real_wavetimer = wavetimer
 	wavetimer = math.huge
-	state_waves_loaded = 1
+	state_waves_loaded = 2
 end
 EnemyDialogueEnding:CreateGroup("INHERITANCE_Post","last")
 EnemyDialogueEnding:Add(captureWaves,"INHERITANCE_Post", "captureWaves")
@@ -388,6 +388,7 @@ local function core_updateWaves()
 		return
 	elseif state_waves_loaded == 2 then
 		core_loadWaves()
+		DefenseStarting()
 		state_waves_loaded = 3
 	elseif state_waves_loaded == 3 then
 

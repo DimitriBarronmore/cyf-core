@@ -325,6 +325,8 @@ Error message and password prompt
 
 <li>$:/state/Excise/-1677870732/tagnew</li>
 
+<li>$:/state/Excise/-2129911379/tagnew</li>
+
 <li>$:/state/folded/$:/ControlPanel</li>
 
 <li>$:/state/folded/$:/core/ui/TopBar/menu</li>
@@ -606,6 +608,8 @@ Error message and password prompt
 <li>CreateState()</li>
 
 <li>custom/caption-titles</li>
+
+<li>DefenseStarting()</li>
 
 <li>end_waves_simultaneously</li>
 
@@ -13069,6 +13073,9 @@ exports.Completion = Completion;
 <div bag="default" created="20201204133725662" modified="20201204133725662" revision="0" title="$:/state/Excise/-1677870732/tagnew">
 <pre>yes</pre>
 </div>
+<div created="20210815085947287" modified="20210815085947287" title="$:/state/Excise/-2129911379/tagnew">
+<pre>yes</pre>
+</div>
 <div bag="default" created="20201108165325534" modified="20201113021521850" revision="0" title="$:/state/folded/$:/ControlPanel">
 <pre>show</pre>
 </div>
@@ -13390,7 +13397,7 @@ exports.Completion = Completion;
 <div bag="default" revision="1" title="$:/status/UserName">
 <pre></pre>
 </div>
-<div created="20210815065618410" list="[[Main Page]]" modified="20210815065904447" title="$:/StoryList">
+<div created="20210815085516643" list="[[Main Page]] [[CORE Inheritance]]" modified="20210815085516643" title="$:/StoryList">
 <pre></pre>
 </div>
 <div bag="default" created="20201108165852924" list="$:/core/ui/Buttons/fold-bar $:/core/ui/Buttons/more-tiddler-actions $:/core/ui/Buttons/fold-others $:/core/ui/Buttons/fold $:/core/ui/Buttons/info $:/core/ui/Buttons/new-here $:/core/ui/Buttons/new-journal-here $:/core/ui/Buttons/clone $:/core/ui/Buttons/export-tiddler $:/core/ui/Buttons/permalink $:/core/ui/Buttons/edit $:/core/ui/Buttons/delete $:/core/ui/Buttons/permaview $:/core/ui/Buttons/open-window $:/core/ui/Buttons/close-others $:/core/ui/Buttons/close" modified="20210709204639496" revision="5" title="$:/tags/ViewToolbar">
@@ -13617,7 +13624,7 @@ It is used heavily in other parts of CORE, such as to set up additional Update()
 
 </pre>
 </div>
-<div created="20210305054814989" list="end_waves_simultaneously AddToSandbox() RemoveFromSandbox() [[(Inheritance) Usage Notes]]" list-after="CORE Overwrite" modified="20210805053649576" tags="[[Table Of Contents]]" title="CORE Inheritance">
+<div created="20210305054814989" list="end_waves_simultaneously DefenseStarting() AddToSandbox() RemoveFromSandbox() [[(Inheritance) Usage Notes]]" list-after="CORE Overwrite" modified="20210815090005947" tags="[[Table Of Contents]]" title="CORE Inheritance">
 <pre>&quot;&quot;&quot;A custom wave loader which enables variables to be passed directly into wave files with very few necessary changes. Doesn't add much functionality by itself, but makes some inter-script wizardry a bit easier.
 
 Using this module, the Encounter script can be accessed within wave files as a normal table without going through GetVar, SetVar and Call, and libraries loaded in the encounter script can be used directly in wave files as well.
@@ -13631,6 +13638,10 @@ This module only loads in the Encounter script.&quot;&quot;&quot;
 &lt;h4&gt;[[Usage Notes|(Inheritance) Usage Notes]]&lt;/h4&gt;
 
 {{(Inheritance) Usage Notes}}
+
+&lt;h4&gt;Events&lt;/h4&gt;
+
+{{DefenseStarting()}}
 
 &lt;h4&gt;Functions&lt;/h4&gt;
 
@@ -13703,6 +13714,10 @@ The new state can be entered by using ''State(''&lt;span class=&quot;term&quot;&
 
 
 </pre>
+</div>
+<div created="20210815085948637" modified="20210815085948637" tags="[[CORE Inheritance]]" title="DefenseStarting()">
+<pre>&lt;$link&gt;&lt;span class=&quot;function&quot;&gt;DefenseStarting()&lt;/span&gt;&lt;/$link&gt;
+Happens as soon as Inheritance is finished loading all the waves. Use this if you need a good time to mess directly with the wave scripts, since CYF enters the &lt;span class=&quot;term&quot;&gt;DEFENDING&lt;/span&gt; state __before__ any waves are loaded by Inheritance.</pre>
 </div>
 <div created="20210305063920693" modified="20210805033051030" tags="[[CORE Inheritance]]" title="end_waves_simultaneously">
 <pre>&lt;$link&gt;&lt;span class=&quot;term&quot;&gt;''end_waves_simultaniously'' = true&lt;/span&gt;&lt;/$link&gt;
