@@ -37,6 +37,10 @@ function EnemyDialogueEnding()
     nextwaves = { possible_attacks[math.random(#possible_attacks)] }
 end
 
+function DefenseStarting()
+    -- Good location to directly interact with wave environments.
+end
+
 function DefenseEnding() --This built-in function fires after the defense round ends.
     encountertext = RandomEncounterText() --This built-in function gets a random encounter text from a random enemy.
 end
