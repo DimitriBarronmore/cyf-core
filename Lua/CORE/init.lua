@@ -82,3 +82,38 @@ if (not (mons or wave)) or enc then -- Encounter-only
 
 
 end
+
+-- Safety Environment!
+
+local safe_env = {}
+local to_protect = {
+	EncounterStarting = true,
+	EnemyDialogueStarting = true,
+	EnemyDialogueEnding = true,
+	DefenseEnding = true,
+	HandleSpare = true,
+	HandleItem = true,
+	EnteringState = true,
+	Update = true,
+	BeforeDeath = true,
+	OnHit = true,
+	HandleAttack = true,
+	OnDeath = true,
+	OnSpare = true,
+	BeforeDamageCalculation = true,
+	BeforeDamageValues = true,
+	HandleCustomCommand = true,
+	EndingWave = true
+}
+
+setmetatable(safe_env, {
+	__index = _ENV, 
+	__newindex = function(t,k,v)
+		if to_protect[k] and _ENV[k] then
+			_ENV[k].method = v
+		else
+			_ENV[k] = v
+		end
+	end })
+
+return safe_env
