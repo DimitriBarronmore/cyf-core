@@ -1,3 +1,12 @@
+--[[
+	TODO:
+	Remove the necessity of going through EnemyDialogeEnding before the loader will work.
+		- Safely wrap wavetimer and nextwaves so that changing them actually alters Inheritance's own variables
+		- Make the loader trigger whenever DEFENDING is entered for any reason
+	    - Make the unloader trigger whenever DEFENDING is exited for any reason
+--]]
+
+
 --[[ 
 	
 	CORE Inheritance -- A wave wrapper which sandboxes them inside the Encounter script.

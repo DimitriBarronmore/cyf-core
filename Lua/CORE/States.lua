@@ -142,12 +142,11 @@ local function new_entering_state(new, old)
 	if natural == "natural" then 
 		State(new)
 	else
-		return break_event
+		--return break_event
 	end
 
 end
 
-EnteringState:CreateGroup("CORE_handle_changes", "first")
 EnteringState:Add(new_entering_state, "CORE_handle_changes", "call EnteringState() on natural changes")
 
 local function update_current_state()

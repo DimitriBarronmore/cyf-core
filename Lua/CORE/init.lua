@@ -45,6 +45,9 @@ local wave = EndWave
 if (not (mons or wave)) or enc then -- Encounter-only
 
 	Update:CreateGroup("ADDITIONAL_UPDATES","last")
+	EncounterStarting:CreateGroup("CORE_Setup", "first")
+	EnteringState:CreateGroup("CORE_handle_changes", "first")
+
 
 	-- Inheritance
 	DefenseStarting = CreateEvent()
@@ -59,7 +62,6 @@ if (not (mons or wave)) or enc then -- Encounter-only
 	AddToSandbox("GetIsWrapped")
 
 	-- States
-	EncounterStarting:CreateGroup("CORE_Setup", "first")
 	EncounterStarting:Add(function() 
 		require "CORE/States" 
 	end, "CORE_Setup", "import states")
