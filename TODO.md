@@ -1,0 +1,13 @@
+
+- basic setup skeleton 
+- pull in new require function
+- start with raw batteries (type etc.)
+- rework/look back over event system
+- revamp state system
+- pull in monster wrapping
+- pull in/revamp wave wrapping
+	- make sure both have ways to add to the default sandbox
+		- event that returns the sandbox as it's being created?
+		- way to create functions which are locked into the new sandbox?
+		- lock in functions assigned to the sandbox to begin with? (DONE)
+	- ensure text objects and onhit are taken care of properly
