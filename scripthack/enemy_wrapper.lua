@@ -1,3 +1,5 @@
+-- ensure core/batteries loads first
+
 local set = function(tab)
 	local settab = {}
 	for _,v in ipairs(tab) do
@@ -166,7 +168,11 @@ local special_funcs = {
 local function create_monster_sandbox()
 	local sbox = {}
 	for _, key in ipairs(export.sandbox_templ) do
-		sbox[key] = _G[key]
+		if rawtype(_G[key]) == "table" then
+			sbox[key] = table.deepcopy(_G[key])
+		else
+			sbox[key] = _G[key]
+		end
 	end
 
 	sbox._G = sbox
@@ -213,7 +219,7 @@ function __REDIRECT_EVENTS(event, script_id, ...)
 end
 
 function export.CreateEnemy(monster_name, x, y)
-	local realenim = CreateEnemy("blank_mons", x, y)
+	local realenim = CreateEnemy("CORE/blank_mons", x, y)
 	local newenim = create_monster_sandbox()
 
 	for _, key in ipairs(special_funcs) do
@@ -245,10 +251,8 @@ function export.CreateEnemy(monster_name, x, y)
 					end
 					]]):format(k, k, id)
 				)
-				rawset(newenim, k, newenim.load(string.dump(v)))
-				DEBUG(tostring(newenim[k]))
-				-- DEBUG(("%s|%s"):format( newenim.load(string.dump(v))))
-				return
+				-- rawset(newenim, k, newenim.load(string.dump(v)))
+				-- return
 			end
 			if special_vars[k] then
 				realenim[k] = v
@@ -272,26 +276,21 @@ function export.CreateEnemy(monster_name, x, y)
 	return newenim
 end
 
+-- Automatically set up the dummy monster file for the user.
+local filetext = [[
+	function __DOSTRING(str)
+		load(str)()
+	end
+		
+	sprite = "empty"
+	name = "<dummy>"
+]]
+local has_monsdir = Misc.DirExists("Lua/Monsters/CORE")
+if not has_monsdir then
+	Misc.CreateDir("Lua/Monsters/CORE")
+	local monsfile = Misc.OpenFile("Lua/Monsters/CORE/blank_mons.lua", "w")
+	monsfile.Write(filetext, false)
+end
+
+
 return export 
-
--- function enimwraptest()
--- 	local realenim = enemies[1]
--- 	local newenim = setmetatable({},{
--- 	__newindex = function(t,k,v)
--- 		if type(v) == "function" then
--- 		local ftext = string.dump(v)
--- 		realenim.Call("loadstr", ("%s = load(%s)"):format(k, "[[" .. ftext .. "]]") )
--- 		else
--- 		realenim[k] = v
--- 		end
--- 	end,
--- 	__index = function(t,k)
--- 		return realenim[k]
--- 	end
--- 	})
-
--- 	-- newenim.commands = {"A", "B", "C"}
--- 	-- newenim.foobar = function() DEBUG(name) end
-
--- 	-- realenim.Call("foobar")
--- end
