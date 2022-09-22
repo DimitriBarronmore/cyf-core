@@ -16,8 +16,10 @@ function type(obj)
 end
 
 --[[
-	This function comes directly from a stackoverflow answer by islet8.
+	This function comes from a stackoverflow answer by islet8.
+	Slightly modified to respect the new type/rawtype distinction.
 	https://stackoverflow.com/a/16077650
+	https://creativecommons.org/licenses/by-sa/3.0/
 --]]
 function table.deepcopy(o, seen)
   seen = seen or {}
