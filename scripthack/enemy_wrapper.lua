@@ -160,7 +160,6 @@ local script_events = set{
 	"BeforeDamageCalculation",
 	"BeforeDamageValues",
 	"HandleCustomCommand",
-	"OnCreation",
 	"Update",
 }
 
@@ -327,7 +326,6 @@ function export.CreateEnemy(monster_name, x, y)
 	end
 
 	realenim.Call("SetSprite", newenim.sprite)
-	newenim.OnCreation()
 
 	return newenim
 end
