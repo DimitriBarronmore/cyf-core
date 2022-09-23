@@ -18,7 +18,7 @@
 	 If this comment still exists, I never felt the need to add one. Them's the brakes. 
 —-]]
 
-local events = {}
+local export = {}
 
 local LList = {}
 
@@ -122,10 +122,35 @@ function EventFunctions:CreateGroup(name, position, before)
 	end
 end
 
+local function can_execute(f)
+	if rawtype(f) == "function" then
+		return true
+	elseif rawtype(f) == "table" then
+		local mt = debug.getmetatable(f)
+		if not mt then return false end
+		if mt.__call then
+			return true
+		end
+	end
+	return false
+end
+
 -- Place a function into the waiting list, with optional name for debugging purposes.
 -- Doesn't error if you put in something other than a function, but it WILL crash anyways.
 -- Defaults to BeforeMethod, for no particular reason.
-function EventFunctions:Add(func, chosen_set, name)
+-- function EventFunctions:Add(func, chosen_set, name)
+function EventFunctions:Add(a, b, c)
+	local func, chosen_set, name
+	if can_execute(a) then
+		func, chosen_set, name = a, b, c
+	elseif can_execute(b) then
+		func, chosen_set, name = b, a, c
+	elseif can_execute(c) then
+		func, chosen_set, name = c, a, b
+	else
+		-- no function passed, return python-like deco
+		return function(f) self:Add(a, b, f) end
+	end
 	--error checking
 	if func == self.method then
 		error("cannot add .method function to its own event", 2)
@@ -264,33 +289,40 @@ end
 
 -- Here we finally create and return individual Event objects.
 
+local ev_metatable = { 
+	__index = EventFunctions, 
+	__type = "event",
+	__call = function(tab, ...)
+		return tab:Call(...)
+	end
+}
+
+local list_metatable = {
+	__index = LList, 
+	__call = function(tab)
+		return tab:items()
+	end
+}
+
 function CreateEvent(func)
-	local temp_mt = getmetatable(func)
-	if func then
-		if not (type(func) == "function") then
-			if not (temp_mt and temp_mt.__call) then
+	if (not can_execute(func)) and (func ~= nil) then
+	-- local temp_mt = getmetatable(func)
+	-- if func then
+	-- 	if not (type(func) == "function") then
+	-- 		if not (temp_mt and temp_mt.__call) then
 			error("Attempted to make event with reference of type <" .. type(func)
 				.. ">.\nRequested object must be a function or a callable table.",2)
-		end end
+		-- end end
 	end
 
 	--Initialize List
 	local Event = {}
 	--Set the metatable for the Event object.
-	setmetatable(Event, { __index = EventFunctions, 
-						  __type = "event",
-						  __call = function(tab, ...)
-						  	  return tab:Call(...)
-						  end
-						} )
+	setmetatable(Event, ev_metatable )
 	--Initialize the default series of sets.
 	Event.dictionary = {}
 	Event._tokill = {}
-	Event.list = setmetatable({}, {__index = LList, 
-								   __call = function(tab)
-								      return tab:items()
-								   end
-							 	  } )
+	Event.list = setmetatable({}, list_metatable )
 	Event.list.BeforeMethod = {name = "BeforeMethod", methods = {}}
 	Event.list.AfterMethod = {name = "AfterMethod", methods = {}}
 	Event.list:insertFirst(Event.list.BeforeMethod)
@@ -305,3 +337,5 @@ function CreateEvent(func)
 
 	return Event
 end
+
+-- return export
