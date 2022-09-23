@@ -121,6 +121,8 @@ export.sandbox_templ = {
 	"_getv",
 	"State",
 	-- "CreateText"
+	-- custom additions:
+	"rawtype",
 }
 
 --[[ special: set outside sandbox 
@@ -176,6 +178,7 @@ local function create_monster_sandbox()
 	end
 
 	sbox._G = sbox
+	sbox.Encounter = enc_sandbox.env
 	sbox.load = function(a, b, c, env)
 		if env == nil then
 			env = sbox
