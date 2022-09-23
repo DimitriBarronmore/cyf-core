@@ -97,7 +97,9 @@ local initial_sandbox = {
 	"wavetimer",
 	"arenasize",
 	"enemies",
-	"enemypositions"
+	"enemypositions",
+	-- custom additions
+	"rawtype"
 }
 
 local post_encstarting = {
@@ -128,7 +130,7 @@ local special_variables = set{
 	"revive",
 	"deathtext",
 	"deathmusic",
-	"Wave",
+	-- "Wave",
 	"noscalerotationbug",
 }
 
