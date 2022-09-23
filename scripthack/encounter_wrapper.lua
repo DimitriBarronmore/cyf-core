@@ -145,14 +145,25 @@ local event_names = set{
 	"EnteringState",
 	"Update",
 	"BeforeDeath",
+	"OnHit",
+	"OnTextAdvance",
 }
 
 local sandbox_env = {}
+
 
 for _,key in ipairs(initial_sandbox) do
 	sandbox_env[key] = _G[key]
 end
 
+for key, _ in pairs(event_names) do
+	local ev = CreateEvent()
+	_G[key] = ev
+end
+
+OnHit.method = function()
+	Player.Hurt(3)
+end
 
 local function post_setup()
 	for _, key in ipairs(post_encstarting) do
@@ -163,7 +174,7 @@ end
 
 setmetatable(sandbox_env, {
 	__index = function(t,k)
-		if special_variables[k] then
+		if special_variables[k] or event_names[k] then
 			return _G[k]
 		else
 			return rawget(t, k)
@@ -172,10 +183,11 @@ setmetatable(sandbox_env, {
 	__newindex = function(t,k,v)
 		if special_variables[k] then
 			_G[k] = v
-		-- elseif event_names[k] then
-
+		elseif event_names[k] then
+			_G[k].method = v
+		else
+			rawset(t, k, v)
 		end
-		rawset(t, k, v)
 	end
 })
 
