@@ -1,29 +1,42 @@
 local path = (...):gsub("init", "")
 
+--[[ Loading in baseline modules ]]--
+
 -- Batteries
 local create_require = require(path .. "scripthack/new_require")
 require = create_require(_G)
 
 require(path .. "batteries")
 
-local enc_wrap = require(path .. "scripthack/encounter_wrapper")
-local new_encounter_env = enc_wrap.env
+-- Event System
+local events = require(path .. "events")
+
+
+--[[ Various Script Wrappers ]]--
+
+-- This script is responsible for creating events for each of the encounter script events, 
+-- and then building the protected sandbox for them.
+local sandbox = require(path .. "scripthack/encounter_wrapper")
+
+-- This script is responsible for creating sandboxes for monster scripts, with created events,
+-- and opening up the ability to manipulate them on creation.
+local mons_wrap = require(path .. "scripthack/enemy_wrapper")
 
 
 -- INITIAL LIBRARY SETUP
-function EncounterStarting()
-	enc_wrap.post_setup()
-	new_encounter_env.EncounterStarting()
+EncounterStarting:CreateGroup("CORE", "first")
+EncounterStarting:Add("CORE", function()
+	sandbox.post_setup()
 
-end
+end)
 
--- -- STEP BY STEP SETUP
-function Update()
-
-	new_encounter_env.Update()
-end
+-- UPDATES
+Update:CreateGroup("CORE", "first")
+Update:Add("CORE", function()
+	mons_wrap.run_update()
+end)
 
 
 -- User must insure this is set in the new file.
-return new_encounter_env
+return sandbox.env
 
