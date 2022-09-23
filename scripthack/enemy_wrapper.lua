@@ -10,6 +10,7 @@ end
 
 local path = (...):gsub("enemy_wrapper", "")
 local create_require = require(path .. "new_require")
+local enc_sandbox = require(path .. "encounter_wrapper")
 
 local export = {}
 
@@ -132,7 +133,7 @@ export.sandbox_templ = {
 	"dofile", 
 	"require",
 
-	"Encounter",
+Happens when you select an Act command on this monster. command will be the same as how you defined it in the commands list, except it will be IN ALL CAPS. Intermediate example below, showing how you can use it and spice it up a little.	"Encounter",
 
 --]]
     
@@ -152,14 +153,16 @@ local special_funcs = {
 	-- "CreateText"
 }
 
--- local script_events = {
--- 	"HandleAttack",
--- 	"OnDeath",
--- 	"OnSpare",
--- 	"BeforeDamageCalculation",
--- 	"BeforeDamageValues",
--- 	"HandleCustomCommand",
--- }
+local script_events = set{
+	"HandleAttack",
+	"OnDeath",
+	"OnSpare",
+	"BeforeDamageCalculation",
+	"BeforeDamageValues",
+	"HandleCustomCommand",
+	"OnCreation",
+	"Update",
+}
 
 --[[ Special: reimplement
 	OnHit,
@@ -221,6 +224,13 @@ function __REDIRECT_EVENTS(event, script_id, ...)
 	end
 end
 
+local scripts_to_update = {}
+function export.run_update()
+	for script, _ in pairs(scripts_to_update) do
+		script.Update()
+	end
+end
+
 function export.CreateEnemy(monster_name, x, y)
 	local realenim = CreateEnemy("CORE/blank_mons", x, y)
 	local newenim = create_monster_sandbox()
@@ -231,6 +241,27 @@ function export.CreateEnemy(monster_name, x, y)
 		end
 	end
 
+	newenim.Kill = function()
+		scripts_to_update[newenim] = nil
+		realenim.Call("Kill")
+	end
+
+	newenim.Spare = function()
+		scripts_to_update[newenim] = nil
+		realenim.Call("Spare")
+	end
+
+	newenim.SetActive = function(bool)
+		if bool == true then
+			scripts_to_update[newenim] = true
+		else
+			scripts_to_update[newenim] = nil
+		end
+		realenim.Call("SetActive", bool)
+	end
+
+	scripts_to_update[newenim] = true
+
 	-- newenim.CreateText = function(a, b, c, d, e)
 	-- 	return realenim.Call("CreateText", {a,b,c,d,e})
 	-- end
@@ -238,16 +269,35 @@ function export.CreateEnemy(monster_name, x, y)
 	local id = register_script(newenim)
 	-- realenim.Call("__SETUP_EVENTS", id)
 
+	local sbox_events = {}
+	local events_id = register_script(sbox_events)
+
+	for key, _ in pairs(script_events) do
+		sbox_events[key] = CreateEvent()
+		realenim.Call("__DOSTRING",
+			([[%s = function(...)
+				Encounter.Call("__REDIRECT_EVENTS", {"%s", %s, ...})
+			end
+			]]):format(key, key, events_id)
+		)
+	end
+
+	sbox_events.OnDeath.method = function() newenim.Kill() end
+	sbox_events.OnSpare.method = function() newenim.Spare() end
+
+
 	setmetatable(newenim, {
 		__index = function(t, k)
 			if special_vars[k] then
 				return realenim[k]
+			elseif script_events[k] then
+				return sbox_events[k]
 			else
 				return rawget(t, k)
 			end
 		end,
 		__newindex = function(t, k, v)
-			if type(v) == "function" then
+			if type(v) == "function" and (not script_events[k]) then
 				realenim.Call("__DOSTRING",
 					([[%s = function(...)
 						Encounter.Call("__REDIRECT_EVENTS", {"%s", %s, ...})
@@ -259,6 +309,8 @@ function export.CreateEnemy(monster_name, x, y)
 			end
 			if special_vars[k] then
 				realenim[k] = v
+			elseif script_events[k] then
+				sbox_events[k].method = v
 			else
 				rawset(t, k, v)
 			end
@@ -275,6 +327,7 @@ function export.CreateEnemy(monster_name, x, y)
 	end
 
 	realenim.Call("SetSprite", newenim.sprite)
+	newenim.OnCreation()
 
 	return newenim
 end
