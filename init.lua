@@ -9,14 +9,14 @@ require = create_require(_G)
 require(path .. "batteries")
 
 -- Event System
-local events = require(path .. "events")
+require(path .. "events")
 
 
 --[[ Various Script Wrappers ]]--
 
 -- This script is responsible for creating events for each of the encounter script events, 
 -- and then building the protected sandbox for them.
-local sandbox = require(path .. "scripthack/encounter_wrapper")
+local enc_wrap = require(path .. "scripthack/encounter_wrapper")
 
 -- This script is responsible for creating sandboxes for monster scripts, with created events,
 -- and opening up the ability to manipulate them on creation.
@@ -26,7 +26,7 @@ local mons_wrap = require(path .. "scripthack/enemy_wrapper")
 -- INITIAL LIBRARY SETUP
 EncounterStarting:CreateGroup("CORE", "first")
 EncounterStarting:Add("CORE", function()
-	sandbox.post_setup()
+	enc_wrap.post_setup()
 
 end)
 
@@ -38,5 +38,5 @@ end)
 
 
 -- User must insure this is set in the new file.
-return sandbox.env
+return enc_wrap.env
 
