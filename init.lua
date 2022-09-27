@@ -36,6 +36,10 @@ Update:Add("CORE", function()
 	mons_wrap.run_update()
 end)
 
+-- USER SANDBOX MODIFICATION
+Sandbox = {}
+Sandbox.monster_setup = mons_wrap.enemy_sandbox_setup
+
 
 -- User must insure this is set in the new file.
 return enc_wrap.env
