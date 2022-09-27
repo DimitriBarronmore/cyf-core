@@ -156,14 +156,14 @@ for _,key in ipairs(initial_sandbox) do
 	sandbox_env[key] = _G[key]
 end
 
-for key, _ in pairs(event_names) do
-	local ev = CreateEvent()
-	_G[key] = ev
-end
+-- for key, _ in pairs(event_names) do
+-- 	local ev = CreateEvent()
+-- 	_G[key] = ev
+-- end
 
-OnHit.method = function()
-	Player.Hurt(3)
-end
+-- OnHit.method = function()
+-- 	Player.Hurt(3)
+-- end
 
 local function post_setup()
 	for _, key in ipairs(post_encstarting) do

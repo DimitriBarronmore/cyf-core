@@ -10,6 +10,7 @@ require(path .. "batteries")
 
 -- Event System
 require(path .. "events")
+require(path .. "scripthack/create_enc_events")
 
 
 --[[ Various Script Wrappers ]]--
