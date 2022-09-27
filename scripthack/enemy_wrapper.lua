@@ -230,6 +230,8 @@ function export.run_update()
 	end
 end
 
+export.enemy_sandbox_setup = CreateEvent()
+
 function export.CreateEnemy(monster_name, x, y)
 	local realenim = CreateEnemy("CORE/blank_mons", x, y)
 	local newenim = create_monster_sandbox()
@@ -284,6 +286,8 @@ function export.CreateEnemy(monster_name, x, y)
 	sbox_events.OnDeath.method = function() newenim.Kill() end
 	sbox_events.OnSpare.method = function() newenim.Spare() end
 
+	-- user modifications
+	export.enemy_sandbox_setup(newenim)
 
 	setmetatable(newenim, {
 		__index = function(t, k)
