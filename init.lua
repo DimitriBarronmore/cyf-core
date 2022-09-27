@@ -12,34 +12,49 @@ require(path .. "batteries")
 require(path .. "events")
 require(path .. "scripthack/create_enc_events")
 
+Update:CreateGroup("CORE", "first")
+EncounterStarting:CreateGroup("CORE", "first")
+
 
 --[[ Various Script Wrappers ]]--
-
--- This script is responsible for creating events for each of the encounter script events, 
--- and then building the protected sandbox for them.
-local enc_wrap = require(path .. "scripthack/encounter_wrapper")
 
 -- This script is responsible for creating sandboxes for monster scripts, with created events,
 -- and opening up the ability to manipulate them on creation.
 local mons_wrap = require(path .. "scripthack/enemy_wrapper")
 
-
--- INITIAL LIBRARY SETUP
-EncounterStarting:CreateGroup("CORE", "first")
-EncounterStarting:Add("CORE", function()
-	enc_wrap.post_setup()
-
-end)
-
--- UPDATES
-Update:CreateGroup("CORE", "first")
 Update:Add("CORE", function()
 	mons_wrap.run_update()
 end)
 
+
+
 -- USER SANDBOX MODIFICATION
-Sandbox = {}
-Sandbox.monster_setup = mons_wrap.enemy_sandbox_setup
+local sandbox_obj = {}
+sandbox_obj.monster_setup = mons_wrap.enemy_sandbox_setup
+
+
+
+-- This script is responsible for capping off the Encounter sandbox.
+local enc_wrap = require(path .. "scripthack/encounter_wrapper")
+local env = enc_wrap.env
+
+-- ENSURE THAT ALL ADDED FUNCTIONS ARE PRESENT
+env.rawtype = rawtype
+env.CreateEvent = CreateEvent
+
+-- VALUES TO SET HERE:
+	-- "State",
+	-- "RandomEncounterText",
+	-- "CreateProjectile",
+	-- "CreateProjectileAbs",
+	-- "SetButtonLayer",
+	-- "CreateEnemy",
+	-- "Flee",
+	-- "Wave",
+EncounterStarting:Add("CORE", function()
+	enc_wrap.post_setup()
+	env.CreateEnemy = mons_wrap.CreateEnemy
+end)
 
 
 -- User must insure this is set in the new file.
