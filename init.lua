@@ -13,7 +13,10 @@ require(path .. "events")
 require(path .. "scripthack/create_enc_events")
 
 Update:CreateGroup("CORE", "first")
+Update:CreateGroup("ADDITIONAL_UPDATES", "AfterMethod")
 EncounterStarting:CreateGroup("CORE", "first")
+EnteringState:CreateGroup("CORE", "first")
+
 
 
 --[[ Various Script Wrappers ]]--
@@ -22,7 +25,7 @@ EncounterStarting:CreateGroup("CORE", "first")
 -- and opening up the ability to manipulate them on creation.
 local mons_wrap = require(path .. "scripthack/enemy_wrapper")
 
-Update:Add("CORE", function()
+Update:Add("ADDITIONAL_UPDATES", function()
 	mons_wrap.run_update()
 end)
 
@@ -41,6 +44,7 @@ local env = enc_wrap.env
 -- ENSURE THAT ALL ADDED FUNCTIONS ARE PRESENT
 env.rawtype = rawtype
 env.CreateEvent = CreateEvent
+-- env.State = perm_State
 
 -- VALUES TO SET HERE:
 	-- "State",
@@ -54,6 +58,14 @@ env.CreateEvent = CreateEvent
 EncounterStarting:Add("CORE", function()
 	enc_wrap.post_setup()
 	env.CreateEnemy = mons_wrap.CreateEnemy
+
+	-- Custom States
+	local new_es = require(path .. "states")
+	env.GetCurrentState = GetCurrentState
+	env.CreateState = CreateState
+	env.GetRealCurrentState = GetRealCurrentState
+	env.State = State
+	-- rawset(env, "EnteringState", new_es)
 end)
 
 
