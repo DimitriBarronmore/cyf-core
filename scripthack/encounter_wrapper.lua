@@ -167,7 +167,9 @@ end
 
 local function post_setup()
 	for _, key in ipairs(post_encstarting) do
-		rawset(sandbox_env, key, _G[key])
+		if not sandbox_env[key] then
+			rawset(sandbox_env, key, _G[key])
+		end
 	end
 end
 
