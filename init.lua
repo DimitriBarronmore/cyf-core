@@ -13,7 +13,7 @@ require(path .. "events")
 require(path .. "scripthack/create_enc_events")
 
 Update:CreateGroup("CORE", "first")
-Update:CreateGroup("ADDITIONAL_UPDATES", "AfterMethod")
+Update:CreateGroup("ADDITIONAL_UPDATES", "last")
 EncounterStarting:CreateGroup("CORE", "first")
 EnteringState:CreateGroup("CORE", "first")
 
@@ -60,12 +60,11 @@ EncounterStarting:Add("CORE", function()
 	env.CreateEnemy = mons_wrap.CreateEnemy
 
 	-- Custom States
-	local new_es = require(path .. "states")
+	require(path .. "states")
 	env.GetCurrentState = GetCurrentState
 	env.CreateState = CreateState
 	env.GetRealCurrentState = GetRealCurrentState
 	env.State = State
-	-- rawset(env, "EnteringState", new_es)
 end)
 
 
