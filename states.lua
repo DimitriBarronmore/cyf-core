@@ -86,7 +86,9 @@ local function new_state( nextstate, no_transition )
 	if not type(nextstate == "string") then
 		error("state name must be a string", 2)
 	elseif not states_list[nextstate] then
-		error("attempt to enter state which does not exist", 2)
+		error("The state \"" .. nextstate ..[[\" is not a valid state. Are you sure it exists?
+
+Please double-check in the Misc. Functions section od the docs for a list of every default valid state.]], 3)
 	end
 
 	nested = nested + 1
