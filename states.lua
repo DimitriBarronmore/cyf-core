@@ -169,11 +169,12 @@ local new_entering_state = function (new, old, ignore_this)
 	if natural == "natural" then 
 		State(new, "skip_transition")
 		-- new_es_callback(new, old)
-	else
+	-- else
+	end
 		-- DEBUG("real states: " .. last_name .. " > " .. next_name)
 		EnteringState(next_name, last_name, true)
 		return break_event
-	end
+	-- end
 
 end
 
